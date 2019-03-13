@@ -7,5 +7,10 @@
 				sh 'echo do some stuff'
 			}
 		}
+		stage('fuck'){
+			steps{
+				sh 'dotnet restore'
+			}
+		}
 	}
 }
