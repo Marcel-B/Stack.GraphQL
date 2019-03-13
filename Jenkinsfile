@@ -99,12 +99,10 @@ node {
         if(env.BRANCH_NAME == 'master'){
             stage('Docker'){
                 mvnHome = env.BUILD_NUMBER
-                updateGitlabCommitStatus name: 'containerize', state: 'running', sha: commitId
-                dir('Home.LuftdatenApi') {
-                    sh "docker build -t docker.nuqneh.de/stack.datalayer:1.0.${mvnHome} ."
-                }
-                withDockerRegistry(credentialsId: 'MyDockerCredentials', toolName: 'NuqnehDocker', url: 'https://docker.nuqneh.de') {
-                    sh "docker push docker.nuqneh.de/stack.datalayer:1.0.${mvnHome}"
+//                updateGitlabCommitStatus name: 'containerize', state: 'running', sha: commitId
+ //                   sh "docker build -t docker.nuqneh.de/stack.datalayer:1.0.${mvnHome} ."
+  //              withDockerRegistry(credentialsId: 'MyDockerCredentials', toolName: 'NuqnehDocker', url: 'https://docker.nuqneh.de') {
+  //                  sh "docker push docker.nuqneh.de/stack.datalayer:1.0.${mvnHome}"
                 }
                 updateGitlabCommitStatus name: 'containerize', state: 'success', sha: commitId
             }   
