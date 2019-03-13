@@ -1,5 +1,5 @@
 ﻿node {
-    
+
     def mvnHome
     def commitId
     properties([gitLabConnection('GitLab')])
@@ -117,7 +117,8 @@
         echo "RESULT: ${currentBuild.result}"
         return
     }
-
+    
+    try{
         stage('Clean Up'){
         updateGitlabCommitStatus name: 'clean', state: 'running', sha: commitId
             cleanWs()
