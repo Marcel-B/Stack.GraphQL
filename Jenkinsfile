@@ -1,7 +1,9 @@
 ﻿pipeline {
-node {
-    stage 'Preparation' { 
-		sh "echo hello"
-    }
-}
+	node {
+		stages {
+			stage('Preparation') { 
+				sh "echo hello"
+			}
+		}
+	}
 }
