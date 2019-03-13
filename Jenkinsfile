@@ -1,5 +1,4 @@
-﻿
-node("marcelbenders.de") {
+﻿node("marcelbenders.de") {
     def mvnHome
     def commitId
     properties([gitLabConnection('GitLab')])

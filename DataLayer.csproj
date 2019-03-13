@@ -23,6 +23,12 @@
     <Compile Remove="Jenkinsfile.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Jenkinsfile" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Jenkinsfile" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Update="NuGet.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
