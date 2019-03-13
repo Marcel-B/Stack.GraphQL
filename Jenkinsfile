@@ -1,7 +1,11 @@
-﻿node {
-    def mvnHome
-    def commitId
-    stage('Preparation') { 
-		sh 'echo Hallo'
-    }
+﻿pipeline {
+	agent any
+
+	stages{
+		stage('build'){
+			steps{
+				sh 'echo do some stuff'
+			}
+		}
+	}
 }
