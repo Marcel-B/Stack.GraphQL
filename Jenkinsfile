@@ -2,6 +2,6 @@
     properties([gitLabConnection('GitLab')])
 
 	stage('Preparation') { 
-		      checkout scm
+		checkout scm
 	}
 }
