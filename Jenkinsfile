@@ -1,5 +1,4 @@
-﻿
-node {
+﻿node {
 
     def mvnHome
     def commitId

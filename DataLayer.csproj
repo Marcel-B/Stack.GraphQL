@@ -23,19 +23,16 @@
     <Compile Remove="Jenkinsfile.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Jenkinsfile" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Jenkinsfile">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <Content Update="NuGet.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Jenkinsfile">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
