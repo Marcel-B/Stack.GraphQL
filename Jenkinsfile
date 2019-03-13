@@ -1,10 +1,7 @@
-﻿node("marcelbenders.de") {
-    def mvnHome
-    def commitId
-    properties([gitLabConnection('GitLab')])
+﻿node('marcelbenders.de') {
+
 
     stage('Preparation') { 
-        checkout scm
-        commitId = sh(returnStdout: true, script: 'git rev-parse HEAD')
+	sh "echo hello"
     }
 }
