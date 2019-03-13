@@ -1,5 +1,7 @@
-﻿	node {
-			stage('Preparation') { 
-				sh "echo hello"
-			}
+﻿node {
+    properties([gitLabConnection('GitLab')])
+
+	stage('Preparation') { 
+		      checkout scm
 	}
+}
