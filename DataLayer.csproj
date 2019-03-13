@@ -26,7 +26,9 @@
     <None Remove="Jenkinsfile" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Jenkinsfile" />
+    <Content Include="Jenkinsfile">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Update="NuGet.config">
