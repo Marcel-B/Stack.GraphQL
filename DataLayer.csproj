@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <RootNamespace>com.b_velop.GraphQl</RootNamespace>
+    <RootNamespace>com.b_velop.stack.GraphQl</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +14,9 @@
 <PackageReference Include="NLog" Version="4.5.11" />
 <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.0" />
 <PackageReference Include="NLog.StructuredLogging.Json" Version="3.0.0" />
+<PackageReference Include="Prometheus.Client.AspNetCore" Version="2.1.0" />
+<PackageReference Include="Prometheus.Client" Version="2.2.2" />
+<PackageReference Include="Classes" Version="0.0.4" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
@@ -29,10 +32,5 @@
     <Content Update="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Jenkinsfile">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

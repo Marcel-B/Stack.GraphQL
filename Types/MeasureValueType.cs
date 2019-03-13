@@ -1,7 +1,8 @@
-﻿using com.b_velop.GraphQl.Contexts;
+﻿using com.b_velop.stack.Classes.Models;
+using com.b_velop.stack.GraphQl.Contexts;
 using GraphQL.Types;
 
-namespace com.b_velop.GraphQl.Types
+namespace com.b_velop.stack.GraphQl.Types
 {
     public class MeasureValueType : ObjectGraphType<MeasureValue>
     {

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Threading.Tasks;
-using com.b_velop.GraphQl.Contexts;
-using com.b_velop.GraphQl.Types;
+using com.b_velop.stack.GraphQl.Contexts;
+using com.b_velop.stack.GraphQl.Types;
 using GraphQL.Types;
 
-namespace com.b_velop.GraphQl.Resolver
+namespace com.b_velop.stack.GraphQl.Resolver
 {
     public class MeasureQuery : ObjectGraphType<object>
     {
@@ -25,15 +24,15 @@ namespace com.b_velop.GraphQl.Resolver
                     context.GetArgument<Guid>("id"))
                 );
 
-            Field<ListGraphType<UnitType>>(
+            FieldAsync<ListGraphType<UnitType>>(
                 "units",
                 resolve: context => measureContext.GetUnitsAsync());
 
-            Field<ListGraphType<MeasureValueType>>(
+            FieldAsync<ListGraphType<MeasureValueType>>(
                 "measureValues",
                 resolve: context => measureContext.GetMeasureValuesAsync());
 
-            Field<ListGraphType<MeasurePointType>>(
+            FieldAsync<ListGraphType<MeasurePointType>>(
                 "measurePoints",
                 resolve: context => measureContext.GetMeasurePointsAsync());
         }

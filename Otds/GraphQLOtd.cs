@@ -1,5 +1,4 @@
-﻿using System;
-namespace com.b_velop.GraphQl.Otds
+﻿namespace com.b_velop.GraphQl.Otds
 {
     public class GraphQLOtd
     {

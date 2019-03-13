@@ -1,9 +1,10 @@
-﻿using com.b_velop.GraphQl.Contexts;
-using com.b_velop.GraphQl.InputTypes;
-using com.b_velop.GraphQl.Types;
+﻿using com.b_velop.stack.Classes.Models;
+using com.b_velop.stack.GraphQl.Contexts;
+using com.b_velop.stack.GraphQl.InputTypes;
+using com.b_velop.stack.GraphQl.Types;
 using GraphQL.Types;
 
-namespace com.b_velop.GraphQl.Resolver
+namespace com.b_velop.stack.GraphQl.Resolver
 {
     public class MeasureMutation : ObjectGraphType
     {
