@@ -1,4 +1,5 @@
 ﻿node {
+    
     def mvnHome
     def commitId
     properties([gitLabConnection('GitLab')])
