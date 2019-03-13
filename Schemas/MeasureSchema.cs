@@ -1,8 +1,8 @@
-﻿using com.b_velop.GraphQl.Resolver;
+﻿using com.b_velop.stack.GraphQl.Resolver;
 using GraphQL;
 using GraphQL.Types;
 
-namespace com.b_velop.GraphQl.Schemas
+namespace com.b_velop.stack.GraphQl.Schemas
 {
     public class MeasureSchema : Schema
     {

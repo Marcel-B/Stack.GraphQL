@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
 
-namespace GraphQl
+namespace com.b_velop.stack.GraphQl
 {
     public class Program
     {

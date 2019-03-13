@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using GraphQL;
-using com.b_velop.GraphQl.Schemas;
 using GraphQL.Types;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +7,7 @@ using com.b_velop.GraphQl.Otds;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace com.b_velop.GraphQl.Controllers
+namespace com.b_velop.stack.GraphQl.Controllers
 {
     [Route("[controller]")]
     [ApiController]

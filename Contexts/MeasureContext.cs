@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using com.b_velop.GraphQl.Types;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using com.b_velop.stack.Classes.Models;
 
-namespace com.b_velop.GraphQl.Contexts
+namespace com.b_velop.stack.GraphQl.Contexts
 {
     public class MeasureContext : DbContext
     {
@@ -31,10 +30,10 @@ namespace com.b_velop.GraphQl.Contexts
         public async Task<object> GetUnitsAsync()
             => await Units.ToListAsync();
 
-        public async Task<IEnumerable<MeasureValue>> GetMeasureValuesAsync()
+        public async Task<object> GetMeasureValuesAsync()
             => await MeasureValues.ToListAsync();
 
-        public async Task<IEnumerable<MeasurePoint>> GetMeasurePointsAsync()
+        public async Task<object> GetMeasurePointsAsync()
             => await MeasurePoints.ToListAsync();
 
         public async Task<object> AddMeasurePointAsync(
@@ -46,7 +45,7 @@ namespace com.b_velop.GraphQl.Contexts
             return measurePoint;
         }
 
-        public async Task<Unit> AddUnitAsync(
+        public async Task<object> AddUnitAsync(
                 Unit unit)
         {
             unit.Id = Guid.NewGuid();
@@ -55,7 +54,7 @@ namespace com.b_velop.GraphQl.Contexts
             return unit;
         }
 
-        public async Task<MeasureValue> AddMeasureValueAsync(
+        public async Task<object> AddMeasureValueAsync(
             MeasureValue measureValue)
         {
             measureValue.Id = Guid.NewGuid();
@@ -72,7 +71,7 @@ namespace com.b_velop.GraphQl.Contexts
             Guid id)
             => await Units.FirstOrDefaultAsync(x => x.Id == id);
 
-        public async Task<MeasureValue> GetMeasureValueAsync(
+        public async Task<object> GetMeasureValueAsync(
             Guid id)
             => await MeasureValues.FirstOrDefaultAsync(x => x.Id == id);
     }

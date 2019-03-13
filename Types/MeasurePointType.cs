@@ -1,7 +1,8 @@
-﻿using com.b_velop.GraphQl.Contexts;
+﻿using com.b_velop.stack.Classes.Models;
+using com.b_velop.stack.GraphQl.Contexts;
 using GraphQL.Types;
 
-namespace com.b_velop.GraphQl.Types
+namespace com.b_velop.stack.GraphQl.Types
 {
     public class MeasurePointType : ObjectGraphType<MeasurePoint>
     {
@@ -18,8 +19,8 @@ namespace com.b_velop.GraphQl.Types
 
             FieldAsync<UnitType, Unit>(
                 nameof(MeasurePoint.Unit),
+                "The Unit of the measure point",
                 resolve: context => measureContext.GetUnitAsync(context.Source.Unit));
-
         }
     }
 }

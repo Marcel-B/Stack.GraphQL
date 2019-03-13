@@ -1,9 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using com.b_velop.GraphQl.Contexts;
-using com.b_velop.GraphQl.InputTypes;
-using com.b_velop.GraphQl.Resolver;
-using com.b_velop.GraphQl.Schemas;
-using com.b_velop.GraphQl.Types;
+using com.b_velop.stack.GraphQl.Contexts;
+using com.b_velop.stack.GraphQl.InputTypes;
+using com.b_velop.stack.GraphQl.Resolver;
+using com.b_velop.stack.GraphQl.Schemas;
+using com.b_velop.stack.GraphQl.Types;
 using GraphQL;
 using GraphQL.Http;
 using GraphQL.Types;
@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace com.b_velop.GraphQl
+namespace com.b_velop.stack.GraphQl
 {
     public class Startup
     {
