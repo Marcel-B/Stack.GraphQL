@@ -1,7 +1,5 @@
-﻿node('marcelbenders.de') {
-
-
-    stage('Preparation') { 
-	sh "echo hello"
+﻿node {
+    stage 'Preparation' { 
+		sh "echo hello"
     }
 }
