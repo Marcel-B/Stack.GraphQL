@@ -105,7 +105,6 @@ node {
 	                sh "docker push docker.nuqneh.de/stack.datalayer:1.0.${mvnHome}"   
 					
                 updateGitlabCommitStatus name: 'containerize', state: 'success', sha: commitId
-            }   
         }
     }catch(Exception ex){
         updateGitlabCommitStatus name: 'containerize', state: 'failed', sha: commitId
