@@ -12,7 +12,7 @@ namespace com.b_velop.GraphQl.Resolver
         {
             Name = "Mutation";
 
-            Field<MeasurePointType>(
+            FieldAsync<MeasurePointType>(
                 "createMeasurePoint",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<MeasurePointInputType>> { Name = "measurePointType"}

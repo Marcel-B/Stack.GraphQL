@@ -16,7 +16,7 @@ namespace com.b_velop.GraphQl.Contexts
         public MeasureContext(
             DbContextOptions<MeasureContext> context) : base(context) { }
 
-        public async Task<IEnumerable<object>> GetTimeTypeByTimeAsync(
+        public async Task<object> GetTimeTypeByTimeAsync(
             TimeSpan getArgument,
             Guid id)
         {
@@ -37,7 +37,7 @@ namespace com.b_velop.GraphQl.Contexts
         public async Task<IEnumerable<MeasurePoint>> GetMeasurePointsAsync()
             => await MeasurePoints.ToListAsync();
 
-        public async Task<MeasurePoint> AddMeasurePointAsync(
+        public async Task<object> AddMeasurePointAsync(
             MeasurePoint measurePoint)
         {
             measurePoint.Id = Guid.NewGuid();

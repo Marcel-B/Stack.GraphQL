@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using com.b_velop.GraphQl.Contexts;
 using com.b_velop.GraphQl.Types;
 using GraphQL.Types;
@@ -12,8 +13,9 @@ namespace com.b_velop.GraphQl.Resolver
         {
             Name = "Query";
 
-            Field<TimeTypeInterface>(
-                "measureValues",
+            FieldAsync<TimeTypeInterface>(
+                "measureValuesSpan",
+                "Returns MeasureValues by Id and TimeSpan",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<TimeSpanSecondsGraphType>> { Name = "timeSpan", Description = "The timespan in seconds to look for" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id", Description = "The id of the MeasureValue" }

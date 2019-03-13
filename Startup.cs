@@ -55,7 +55,7 @@ namespace com.b_velop.GraphQl
 
             services.AddDbContext<MeasureContext>(option =>
             {
-                option.UseSqlServer(Configuration.GetConnectionString("default"));
+                option.UseSqlServer(Configuration.GetConnectionString("production"));
             });
 
             var authority = Configuration.GetSection("ApiSecrets").GetSection("AuthorityUrl").Value;
