@@ -102,7 +102,7 @@ node {
                 updateGitlabCommitStatus name: 'containerize', state: 'running', sha: commitId
 		        sh "docker build -t docker.nuqneh.de/stack.datalayer:1.0.${mvnHome} ."
                 
-                withDockerRegistry(credentialsId: 'MyDockerCredentials', toolName: 'NuqnehDocker', url: 'https://docker.nuqneh.de') {
+                withDockerRegistry(credentialsId: 'DockerRegistry', toolName: 'QaybeDocker', url: 'https://docker.qaybe.de') {
 	                sh "docker push docker.nuqneh.de/stack.datalayer:1.0.${mvnHome}"   
                 }
 
