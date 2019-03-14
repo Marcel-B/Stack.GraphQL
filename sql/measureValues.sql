@@ -1,7 +1,7 @@
 ﻿CREATE TABLE graphql.dbo.MeasureValues (
     Id uniqueidentifier NOT NULL,
     [Timestamp] datetimeoffset NOT NULL,
-    Value real NOT NULL,
+    Value float NOT NULL,
     Point uniqueidentifier NOT NULL,
     CONSTRAINT MeasureValues_PK PRIMARY KEY (Id),
     CONSTRAINT MeasureValues_MeasurePoints_FK FOREIGN KEY (Point) REFERENCES graphql.dbo.MeasurePoints(Id) ON DELETE CASCADE ON UPDATE CASCADE

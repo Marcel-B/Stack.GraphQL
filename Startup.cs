@@ -53,11 +53,17 @@ namespace com.b_velop.stack.GraphQl
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+#if DEBUG
+            services.AddDbContext<MeasureContext>(option =>
+            {
+                option.UseSqlServer(Configuration.GetConnectionString("default"));
+            });
+#else
             services.AddDbContext<MeasureContext>(option =>
             {
                 option.UseSqlServer(Configuration.GetConnectionString("production"));
             });
-
+#endif
             var authority = Configuration.GetSection("ApiSecrets").GetSection("AuthorityUrl").Value;
             var apiName = Configuration.GetSection("ApiSecrets").GetSection("ApiName").Value;
 

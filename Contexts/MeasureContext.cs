@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using com.b_velop.stack.Classes.Models;
+using System.Collections.Generic;
 
 namespace com.b_velop.stack.GraphQl.Contexts
 {
