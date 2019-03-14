@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using com.b_velop.GraphQl.Otds;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace com.b_velop.stack.GraphQl.Controllers
 {
@@ -31,14 +32,17 @@ namespace com.b_velop.stack.GraphQl.Controllers
 
         // POST api/values
         [HttpPost]
+#if DEBUG
+#else
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public IActionResult Post(
+#endif
+        public async Task<IActionResult> Post(
             [FromBody]GraphQLOtd query)
         {
             try
             {
                 var variable = JsonConvert.SerializeObject(query.Variables);
-                var json = _schema.Execute(_ =>
+                var json = await _schema.ExecuteAsync(_ =>
                 {
                     _.Query = query.Query;
                     _.Inputs = variable.ToInputs();
