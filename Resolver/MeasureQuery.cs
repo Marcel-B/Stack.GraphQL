@@ -11,8 +11,19 @@ namespace com.b_velop.stack.GraphQl.Resolver
             MeasureContext measureContext)
         {
             Name = "Query";
+            FieldAsync<ListGraphType<TimeTypeInterface>>(
+                "timeTypeSpan",
+                "Returns Timestamps by Id and TimeSpan",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<TimeSpanSecondsGraphType>> { Name = "timeSpan", Description = "The timespan in seconds to look for" },
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id", Description = "The id of the MeasureValue" }
+                ),
+                resolve: context => measureContext.GetTimeTypeByTimeAsync(
+                    context.GetArgument<TimeSpan>("timeSpan"),
+                    context.GetArgument<Guid>("id"))
+                );
 
-            FieldAsync<TimeTypeInterface>(
+            FieldAsync<ListGraphType<MeasureValueType>>(
                 "measureValuesSpan",
                 "Returns MeasureValues by Id and TimeSpan",
                 arguments: new QueryArguments(
