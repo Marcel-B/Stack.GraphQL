@@ -23,9 +23,10 @@ namespace com.b_velop.stack.GraphQl.Contexts
             var now = DateTimeOffset.Now - getArgument;
             var values = await 
                 Task.Run(() => MeasureValues
-                    .Where(x => x.Id == id && x.Timestamp > now)
+                    .Where(x => x.Id == id)
+                    .Where(x => x.Timestamp >= now)
                     .OrderBy(x => x.Timestamp));
-            return values;
+            return await values.ToListAsync();
         }
 
         public async Task<object> GetUnitsAsync()

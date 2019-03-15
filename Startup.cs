@@ -56,7 +56,7 @@ namespace com.b_velop.stack.GraphQl
 #if DEBUG
             services.AddDbContext<MeasureContext>(option =>
             {
-                option.UseSqlServer(Configuration.GetConnectionString("default"));
+                option.UseSqlServer(Configuration.GetConnectionString("win"));
             });
 #else
             services.AddDbContext<MeasureContext>(option =>
