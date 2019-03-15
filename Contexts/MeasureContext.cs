@@ -52,19 +52,35 @@ namespace com.b_velop.stack.GraphQl.Contexts
         public async Task<object> AddMeasurePointAsync(
             MeasurePoint measurePoint)
         {
-            measurePoint.Id = Guid.NewGuid();
-            await MeasurePoints.AddAsync(measurePoint);
-            await SaveChangesAsync();
-            return measurePoint;
+            try
+            {
+                measurePoint.Id = Guid.NewGuid();
+                await MeasurePoints.AddAsync(measurePoint);
+                await SaveChangesAsync();
+                return measurePoint;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                return null;
+            }
         }
 
         public async Task<object> AddUnitAsync(
                 Unit unit)
         {
-            unit.Id = Guid.NewGuid();
-            await Units.AddAsync(unit);
-            await SaveChangesAsync();
-            return unit;
+            try
+            {
+                unit.Id = Guid.NewGuid();
+                await Units.AddAsync(unit);
+                await SaveChangesAsync();
+                return unit;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                return null;
+            }
         }
 
         public async Task<object> AddMeasureValueAsync(

@@ -16,7 +16,7 @@
 <PackageReference Include="NLog.StructuredLogging.Json" Version="3.0.0" />
 <PackageReference Include="Prometheus.Client.AspNetCore" Version="2.1.0" />
 <PackageReference Include="Prometheus.Client" Version="2.2.2" />
-<PackageReference Include="Classes" Version="0.0.4" />
+<PackageReference Include="Classes" Version="0.0.7" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
