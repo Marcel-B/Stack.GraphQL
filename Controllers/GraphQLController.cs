@@ -29,9 +29,12 @@ namespace com.b_velop.stack.GraphQl.Controllers
         public IActionResult Get()
             => Ok();
 
-        // POST api/values
-        [HttpPost]
+#if DEBUG
+#else
+        // POST graphql
         [Authorize(AuthenticationSchemes = "Bearer")]
+#endif
+        [HttpPost]
         public IActionResult Post(
             [FromBody]GraphQLOtd query)
         {
@@ -47,7 +50,7 @@ namespace com.b_velop.stack.GraphQl.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1542, ex, $"Orror occurred while proccessing GraphQL request '{query}'.", query);
+                _logger.LogError(1542, ex, $"Error occurred while processing GraphQL request '{query}'.", query);
                 return StatusCode(500);
             }
         }
