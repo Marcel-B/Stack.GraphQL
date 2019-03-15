@@ -35,7 +35,7 @@ namespace com.b_velop.stack.GraphQl.Contexts
                     .OrderBy(x => x.Timestamp).ToListAsync();
             foreach (var value in values)
             {
-                _logger.LogInformation($"The value is '{value.Value}' Time '{value.Timestamp}' Point: '{value.Point}'");
+                _logger.LogInformation(8888, $"The value is '{value.Value}' Time '{value.Timestamp}' Point: '{value.Point}'");
             }
             return values;
         }
