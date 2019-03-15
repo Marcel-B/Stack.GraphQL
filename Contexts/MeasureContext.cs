@@ -18,7 +18,8 @@ namespace com.b_velop.stack.GraphQl.Contexts
 
         public MeasureContext(
             ILogger<MeasureContext> logger,
-            DbContextOptions<MeasureContext> context) : base(context) {
+            DbContextOptions<MeasureContext> context) : base(context)
+        {
             _logger = logger;
         }
 
@@ -26,6 +27,7 @@ namespace com.b_velop.stack.GraphQl.Contexts
             TimeSpan getArgument,
             Guid id)
         {
+            _logger.LogInformation(8888, $"Try to get '{id}' '{getArgument}'");
             var now = DateTimeOffset.Now - getArgument;
             var values = await MeasureValues
                     .Where(x => x.Point == id)
@@ -68,6 +70,7 @@ namespace com.b_velop.stack.GraphQl.Contexts
         public async Task<object> AddMeasureValueAsync(
             MeasureValue measureValue)
         {
+            _logger.LogInformation(8888, $"Try to insert '{measureValue.Id}' '{measureValue.Timestamp}' '{measureValue.Point}' '{measureValue.Value}'");
             measureValue.Id = Guid.NewGuid();
             await MeasureValues.AddAsync(measureValue);
             await SaveChangesAsync();
