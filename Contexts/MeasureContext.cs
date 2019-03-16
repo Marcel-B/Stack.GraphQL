@@ -27,15 +27,17 @@ namespace com.b_velop.stack.GraphQl.Contexts
             TimeSpan getArgument,
             Guid id)
         {
-            _logger.LogInformation(8888, $"Try to get '{id}' '{getArgument}'");
+            _logger.LogInformation(2571, $"Try to get '{id}' '{getArgument}'");
+
             var now = DateTimeOffset.Now - getArgument;
             var values = await MeasureValues
                     .Where(x => x.Point == id)
                     .Where(x => x.Timestamp >= now)
                     .OrderBy(x => x.Timestamp).ToListAsync();
+
             foreach (var value in values)
             {
-                _logger.LogInformation(8888, $"The value is '{value.Value}' Time '{value.Timestamp}' Point: '{value.Point}'");
+                _logger.LogInformation(2571, $"The value is '{value.Value}' Time '{value.Timestamp}' Point: '{value.Point}'");
             }
             return values;
         }
@@ -78,7 +80,7 @@ namespace com.b_velop.stack.GraphQl.Contexts
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.StackTrace);
+                _logger.LogError(2573, ex, $"Error occurred while persist Unit '{unit.Display}'", unit);
                 return null;
             }
         }
@@ -86,11 +88,19 @@ namespace com.b_velop.stack.GraphQl.Contexts
         public async Task<object> AddMeasureValueAsync(
             MeasureValue measureValue)
         {
-            _logger.LogInformation(8888, $"Try to insert '{measureValue.Id}' '{measureValue.Timestamp}' '{measureValue.Point}' '{measureValue.Value}'");
-            measureValue.Id = Guid.NewGuid();
-            await MeasureValues.AddAsync(measureValue);
-            await SaveChangesAsync();
-            return measureValue;
+            try
+            {
+                _logger.LogInformation(2573, $"Try to insert '{measureValue.Id}' '{measureValue.Timestamp}' '{measureValue.Point}' '{measureValue.Value}'");
+                measureValue.Id = Guid.NewGuid();
+                await MeasureValues.AddAsync(measureValue);
+                await SaveChangesAsync();
+                return measureValue;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(2573, ex, $"Error occurred while persist MeasureValue ID: '{measureValue.Id}', Timestamp: '{measureValue.Timestamp}', Value: '{measureValue.Value}', PointID: '{measureValue.Point}'", measureValue);
+                return null;
+            }
         }
 
         public async Task<MeasurePoint> GetMeasurePointAsync(

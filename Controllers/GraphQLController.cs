@@ -40,7 +40,9 @@ namespace com.b_velop.stack.GraphQl.Controllers
         {
             try
             {
+                var ins = JsonConvert.SerializeObject(query);
                 var variable = JsonConvert.SerializeObject(query.Variables);
+                _logger.LogInformation(2542, $"Try to insert '{ins}'", ins);
                 var json = _schema.Execute(_ =>
                 {
                     _.Query = query.Query;
@@ -50,7 +52,7 @@ namespace com.b_velop.stack.GraphQl.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1542, ex, $"Error occurred while processing GraphQL request '{query}'.", query);
+                _logger.LogError(2542, ex, $"Error occurred while processing GraphQL request '{query}'.", query);
                 return StatusCode(500);
             }
         }

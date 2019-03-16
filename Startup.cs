@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using com.b_velop.stack.GraphQl.Contexts;
 using com.b_velop.stack.GraphQl.InputTypes;
+using com.b_velop.stack.GraphQl.Middlewares;
 using com.b_velop.stack.GraphQl.Resolver;
 using com.b_velop.stack.GraphQl.Schemas;
 using com.b_velop.stack.GraphQl.Types;
@@ -56,7 +57,7 @@ namespace com.b_velop.stack.GraphQl
 #if DEBUG
             services.AddDbContext<MeasureContext>(option =>
             {
-                option.UseSqlServer(Configuration.GetConnectionString("win"));
+                option.UseSqlServer(Configuration.GetConnectionString("default"));
             });
 #else
             services.AddDbContext<MeasureContext>(option =>
@@ -87,7 +88,7 @@ namespace com.b_velop.stack.GraphQl
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseMetricsCollector();
             app.UseAuthentication();
             app.UseMvc();
         }
