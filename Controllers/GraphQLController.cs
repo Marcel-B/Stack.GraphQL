@@ -42,7 +42,7 @@ namespace com.b_velop.stack.GraphQl.Controllers
             {
                 var ins = JsonConvert.SerializeObject(query);
                 var variable = JsonConvert.SerializeObject(query.Variables);
-                _logger.LogInformation(2542, $"Try to insert query", ins);
+                _logger.LogTrace(2542, $"Try to insert query", ins);
                 var json = _schema.Execute(_ =>
                 {
                     _.Query = query.Query;

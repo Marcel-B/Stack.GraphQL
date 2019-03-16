@@ -90,10 +90,11 @@ namespace com.b_velop.stack.GraphQl.Contexts
         {
             try
             {
-                _logger.LogInformation(2573, $"Try to insert '{measureValue.Id}' '{measureValue.Timestamp}' '{measureValue.Point}' '{measureValue.Value}'");
                 measureValue.Id = Guid.NewGuid();
+                _logger.LogInformation(2573, $"Try to insert '{measureValue.Id}' '{measureValue.Timestamp}' '{measureValue.Point}' '{measureValue.Value}'");
                 await MeasureValues.AddAsync(measureValue);
                 await SaveChangesAsync();
+                _logger.LogInformation(2573, $"Successfully inserted '{measureValue.Id}'");
                 return measureValue;
             }
             catch (Exception ex)
