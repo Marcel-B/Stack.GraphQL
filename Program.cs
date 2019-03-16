@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using com.b_velop.GraphQl;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
+using Prometheus;
 
 namespace com.b_velop.stack.GraphQl
 {
@@ -16,6 +11,10 @@ namespace com.b_velop.stack.GraphQl
     {
         public static void Main(string[] args)
         {
+            var metricServer = new MetricPusher(
+                endpoint: "https://push.qaybe.de/metrics",
+                job: "graphql");
+            metricServer.Start();
             // NLog: setup the logger first to catch all errors
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
