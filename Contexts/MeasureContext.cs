@@ -4,27 +4,41 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using com.b_velop.stack.Classes.Models;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace com.b_velop.stack.GraphQl.Contexts
 {
     public class MeasureContext : DbContext
     {
+        private ILogger<MeasureContext> _logger;
+
         public DbSet<MeasurePoint> MeasurePoints { get; set; }
         public DbSet<MeasureValue> MeasureValues { get; set; }
         public DbSet<Unit> Units { get; set; }
 
         public MeasureContext(
-            DbContextOptions<MeasureContext> context) : base(context) { }
+            ILogger<MeasureContext> logger,
+            DbContextOptions<MeasureContext> context) : base(context)
+        {
+            _logger = logger;
+        }
 
         public async Task<object> GetTimeTypeByTimeAsync(
             TimeSpan getArgument,
             Guid id)
         {
+            _logger.LogInformation(2571, $"Try to get '{id}' '{getArgument}'");
+
             var now = DateTimeOffset.Now - getArgument;
-            var values = await 
-                Task.Run(() => MeasureValues
-                    .Where(x => x.Id == id && x.Timestamp > now)
-                    .OrderBy(x => x.Timestamp));
+            var values = await MeasureValues
+                    .Where(x => x.Point == id)
+                    .Where(x => x.Timestamp >= now)
+                    .OrderBy(x => x.Timestamp).ToListAsync();
+
+            foreach (var value in values)
+            {
+                _logger.LogInformation(2571, $"The value is '{value.Value}' Time '{value.Timestamp}' Point: '{value.Point}'");
+            }
             return values;
         }
 
@@ -40,28 +54,52 @@ namespace com.b_velop.stack.GraphQl.Contexts
         public async Task<object> AddMeasurePointAsync(
             MeasurePoint measurePoint)
         {
-            measurePoint.Id = Guid.NewGuid();
-            await MeasurePoints.AddAsync(measurePoint);
-            await SaveChangesAsync();
-            return measurePoint;
+            try
+            {
+                measurePoint.Id = Guid.NewGuid();
+                await MeasurePoints.AddAsync(measurePoint);
+                await SaveChangesAsync();
+                return measurePoint;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                return null;
+            }
         }
 
         public async Task<object> AddUnitAsync(
                 Unit unit)
         {
-            unit.Id = Guid.NewGuid();
-            await Units.AddAsync(unit);
-            await SaveChangesAsync();
-            return unit;
+            try
+            {
+                unit.Id = Guid.NewGuid();
+                await Units.AddAsync(unit);
+                await SaveChangesAsync();
+                return unit;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(2573, ex, $"Error occurred while persist Unit '{unit.Display}'", unit);
+                return null;
+            }
         }
 
         public async Task<object> AddMeasureValueAsync(
             MeasureValue measureValue)
         {
-            measureValue.Id = Guid.NewGuid();
-            await MeasureValues.AddAsync(measureValue);
-            await SaveChangesAsync();
-            return measureValue;
+            try
+            {
+                measureValue.Id = Guid.NewGuid();
+                await MeasureValues.AddAsync(measureValue);
+                await SaveChangesAsync();
+                return measureValue;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(2573, ex, $"Error occurred while persist MeasureValue ID: '{measureValue.Id}', Timestamp: '{measureValue.Timestamp}', Value: '{measureValue.Value}', PointID: '{measureValue.Point}'", measureValue);
+                return null;
+            }
         }
 
         public async Task<MeasurePoint> GetMeasurePointAsync(

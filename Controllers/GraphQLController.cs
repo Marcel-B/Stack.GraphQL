@@ -10,18 +10,14 @@ using System.Threading.Tasks;
 
 namespace com.b_velop.stack.GraphQl.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class GraphQLController : Controller
     {
-        private readonly ISchema _schema;
         private ILogger<GraphQLController> _logger;
-
         public GraphQLController(
-            ISchema schema,
             ILogger<GraphQLController> logger)
         {
-            _schema = schema;
             _logger = logger;
         }
 
@@ -29,31 +25,5 @@ namespace com.b_velop.stack.GraphQl.Controllers
         [HttpGet]
         public IActionResult Get()
             => Ok();
-
-#if DEBUG
-#else
-        // POST graphql
-        [Authorize(AuthenticationSchemes = "Bearer")]
-#endif
-        [HttpPost]
-        public IActionResult Post(
-            [FromBody]GraphQLOtd query)
-        {
-            try
-            {
-                var variable = JsonConvert.SerializeObject(query.Variables);
-                var json = await _schema.ExecuteAsync(_ =>
-                {
-                    _.Query = query.Query;
-                    _.Inputs = variable.ToInputs();
-                });
-                return Ok(json);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1542, ex, $"Error occurred while processing GraphQL request '{query}'.", query);
-                return StatusCode(500);
-            }
-        }
     }
 }
