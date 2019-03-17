@@ -17,6 +17,7 @@
 <PackageReference Include="Classes" Version="0.0.7" />
 <PackageReference Include="prometheus-net" Version="3.0.3" />
 <PackageReference Include="prometheus-net.AspNetCore" Version="3.0.3" />
+<PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="3.4.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />

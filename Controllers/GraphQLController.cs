@@ -9,7 +9,7 @@ using System;
 
 namespace com.b_velop.stack.GraphQl.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class GraphQLController : Controller
     {

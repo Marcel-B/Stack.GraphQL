@@ -7,6 +7,7 @@ using com.b_velop.stack.GraphQl.Schemas;
 using com.b_velop.stack.GraphQl.Types;
 using GraphQL;
 using GraphQL.Http;
+using GraphQL.Server;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -77,8 +78,12 @@ namespace com.b_velop.stack.GraphQl
                     options.RequireHttpsMetadata = true;
                     options.ApiName = apiName;
                 });
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddGraphQL(_ =>
+            {
+                _.EnableMetrics = true;
+                _.ExposeExceptions = true;
+            });
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,9 +93,9 @@ namespace com.b_velop.stack.GraphQl
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseMetricsCollector();
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseMetricsCollector();
+            app.UseGraphQL<ISchema>("/graphql");
         }
     }
 }

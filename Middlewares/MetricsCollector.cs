@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Prometheus;
+using Microsoft.AspNetCore.Authentication;
 
 namespace com.b_velop.stack.GraphQl.Middlewares
 {
@@ -34,7 +35,19 @@ namespace com.b_velop.stack.GraphQl.Middlewares
         {
             Counter.WithLabels(httpContext.Request.Path, httpContext.Request.Method).Inc();
             using (Gauge.WithLabels(httpContext.Request.Path, httpContext.Request.Method).NewTimer())
+            {
+                if (httpContext.Request.Method == "POST")
+                {
+                    var token = httpContext.AuthenticateAsync("Bearer").Result;
+                    if (token.Succeeded)
+                        System.Console.WriteLine("hey");
+                    else
+                    {
+                        return httpContext.ForbidAsync();
+                    }
+                }
                 return _next(httpContext);
+            }
         }
     }
 
