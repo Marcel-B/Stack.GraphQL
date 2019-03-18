@@ -43,6 +43,9 @@ namespace com.b_velop.stack.GraphQl
             services.AddScoped<UnitType>();
             services.AddScoped<UnitInputType>();
 
+            services.AddScoped<LocationType>();
+            services.AddScoped<LocationInputType>();
+
             services.AddScoped<MeasureValueType>();
             services.AddScoped<MeasureValueInputType>();
 
