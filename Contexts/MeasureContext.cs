@@ -25,12 +25,12 @@ namespace com.b_velop.stack.GraphQl.Contexts
         }
 
         public async Task<object> GetTimeTypeByTimeAsync(
-            TimeSpan getArgument,
+            int getArgument,
             Guid id)
         {
             _logger.LogInformation(2571, $"Try to get '{id}' '{getArgument}'");
 
-            var now = DateTimeOffset.Now - getArgument;
+            var now = DateTimeOffset.Now.AddSeconds(-getArgument);
             var values = await MeasureValues
                     .Where(x => x.Point == id)
                     .Where(x => x.Timestamp >= now)
@@ -145,8 +145,9 @@ namespace com.b_velop.stack.GraphQl.Contexts
                 return null;
             }
         }
+
         public async Task<object> AddLocationAsync(
-            Location location)
+           Location location)
         {
             try
             {
@@ -162,9 +163,10 @@ namespace com.b_velop.stack.GraphQl.Contexts
                 return null;
             }
         }
+
         public async Task<MeasurePoint> GetMeasurePointAsync(
-            Guid id)
-            => await MeasurePoints.FirstOrDefaultAsync(x => x.Id == id);
+          Guid id)
+          => await MeasurePoints.FirstOrDefaultAsync(x => x.Id == id);
 
         public async Task<Unit> GetUnitAsync(
             Guid id)

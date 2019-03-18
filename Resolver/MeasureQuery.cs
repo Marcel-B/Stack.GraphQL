@@ -15,22 +15,22 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 "timeTypeSpan",
                 "Returns Timestamps by Id and TimeSpan",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<TimeSpanSecondsGraphType>> { Name = "timeSpan", Description = "The timespan in seconds to look for" },
+                    new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "timeSpan", Description = "The timespan in seconds to look for" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id", Description = "The id of the MeasureValue" }
                 ),
                 resolve: context => measureContext.GetTimeTypeByTimeAsync(
-                    context.GetArgument<TimeSpan>("timeSpan"),
+                    context.GetArgument<int>("timeSpan"),
                     context.GetArgument<Guid>("id")));
 
             FieldAsync<ListGraphType<MeasureValueType>>(
                 "measureValuesSpan",
                 "Returns MeasureValues by Id and TimeSpan",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<TimeSpanSecondsGraphType>> { Name = "timeSpan", Description = "The timespan in seconds to look for" },
+                    new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "timeSpan", Description = "The timespan in seconds to look for" },
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id", Description = "The id of the MeasureValue" }
                 ),
                 resolve: context => measureContext.GetTimeTypeByTimeAsync(
-                    context.GetArgument<TimeSpan>("timeSpan"),
+                    context.GetArgument<int>("timeSpan"),
                     context.GetArgument<Guid>("id")));
 
             FieldAsync<ListGraphType<UnitType>>(

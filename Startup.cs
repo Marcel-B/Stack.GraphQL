@@ -85,7 +85,7 @@ namespace com.b_velop.stack.GraphQl
             {
                 _.EnableMetrics = true;
                 _.ExposeExceptions = true;
-            });
+            }); // Add required services for DataLoader support;
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -96,6 +96,7 @@ namespace com.b_velop.stack.GraphQl
             {
                 app.UseDeveloperExceptionPage();
             }
+
             app.UseAuthentication();
             app.UseMetricsCollector();
             app.UseGraphQL<ISchema>("/graphql");

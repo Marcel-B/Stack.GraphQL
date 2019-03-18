@@ -33,6 +33,7 @@ namespace com.b_velop.stack.GraphQl.Middlewares
 
         public Task Invoke(HttpContext httpContext)
         {
+
             Counter.WithLabels(httpContext.Request.Path, httpContext.Request.Method).Inc();
             using (Gauge.WithLabels(httpContext.Request.Path, httpContext.Request.Method).NewTimer())
             {
