@@ -10,6 +10,7 @@ namespace com.b_velop.stack.GraphQl.InputTypes
             Name = "MeasurePointInput";
             Field(x => x.Display);
             Field(x => x.Unit, type: typeof(NonNullGraphType<IdGraphType>));
+            Field(x => x.Location, type: typeof(NonNullGraphType<IdGraphType>));
             Field(x => x.Min);
             Field(x => x.Max);
         }
