@@ -20,8 +20,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 ),
                 resolve: context => measureContext.GetTimeTypeByTimeAsync(
                     context.GetArgument<TimeSpan>("timeSpan"),
-                    context.GetArgument<Guid>("id"))
-                );
+                    context.GetArgument<Guid>("id")));
 
             FieldAsync<ListGraphType<MeasureValueType>>(
                 "measureValuesSpan",
@@ -32,12 +31,24 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 ),
                 resolve: context => measureContext.GetTimeTypeByTimeAsync(
                     context.GetArgument<TimeSpan>("timeSpan"),
-                    context.GetArgument<Guid>("id"))
-                );
+                    context.GetArgument<Guid>("id")));
 
             FieldAsync<ListGraphType<UnitType>>(
                 "units",
                 resolve: context => measureContext.GetUnitsAsync());
+
+            FieldAsync<ListGraphType<LocationType>>(
+                "locations",
+                resolve: context => measureContext.GetLocationsAsync());
+
+            //FieldAsync<LocationType>(
+            //    "location",
+            //    "Return a location by their Id",
+            //    arguments: new QueryArguments(
+            //        new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }
+            //        ),
+            //    resolve: contenxt => measureContext.GetLocationAsync(
+            //        contenxt.GetArgument<Guid>("id")));
 
             FieldAsync<ListGraphType<MeasureValueType>>(
                 "measureValues",

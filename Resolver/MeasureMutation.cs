@@ -16,7 +16,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
             FieldAsync<MeasurePointType>(
                 "createMeasurePoint",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<MeasurePointInputType>> { Name = "measurePointType"}
+                    new QueryArgument<NonNullGraphType<MeasurePointInputType>> { Name = "measurePointType" }
                 ),
                 resolve: context =>
                 {
@@ -24,10 +24,10 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     return measureContext.AddMeasurePointAsync(measurePoint);
                 });
 
-            Field<MeasureValueType>(
+            FieldAsync<MeasureValueType>(
                 "createMeasureValue",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<MeasureValueInputType>>{Name = "measureValueType"}
+                    new QueryArgument<NonNullGraphType<MeasureValueInputType>> { Name = "measureValueType" }
                     ),
                 resolve: context =>
                 {
@@ -35,16 +35,27 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     return measureContext.AddMeasureValueAsync(measureValue);
                 });
 
-            Field<UnitType>(
+            FieldAsync<UnitType>(
                 "createUnit",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<UnitInputType>>{Name = "unitType"}
+                    new QueryArgument<NonNullGraphType<UnitInputType>> { Name = "unitType" }
                     ),
                 resolve: context =>
                 {
                     var unit = context.GetArgument<Unit>("unitType");
                     return measureContext.AddUnitAsync(unit);
-                } );
+                });
+
+            FieldAsync<LocationType>(
+                "createLocation",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<LocationInputType>> { Name = "locationType" }
+                    ),
+                resolve: context =>
+                {
+                    var location = context.GetArgument<Location>("locationType");
+                    return measureContext.AddLocationAsync(location);
+                });
         }
     }
 }

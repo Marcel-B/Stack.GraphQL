@@ -7,3 +7,5 @@
     CONSTRAINT MeasurePoints_PK PRIMARY KEY (Id),
     CONSTRAINT MeasurePoints_Units_FK FOREIGN KEY (Unit) REFERENCES graphql.dbo.Units(Id) ON DELETE CASCADE ON UPDATE CASCADE
 ) GO
+ALTER TABLE Measure.dbo.MeasurePoints ADD Location uniqueidentifier NULL GO
+ALTER TABLE Measure.dbo.MeasurePoints ADD CONSTRAINT MeasurePoints_Locations_FK FOREIGN KEY (Location) REFERENCES Measure.dbo.Locations(Id) GO

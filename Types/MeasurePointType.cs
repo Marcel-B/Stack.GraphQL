@@ -21,6 +21,11 @@ namespace com.b_velop.stack.GraphQl.Types
                 nameof(MeasurePoint.Unit),
                 "The Unit of the measure point",
                 resolve: context => measureContext.GetUnitAsync(context.Source.Unit));
+
+            FieldAsync<LocationType, Location>(
+                nameof(MeasurePoint.Location),
+                "The location of the measure point",
+                resolve: context => measureContext.GetLocationAsync(context.Source.Location));
         }
     }
 }

@@ -15,6 +15,7 @@ namespace com.b_velop.stack.GraphQl.Contexts
         public DbSet<MeasurePoint> MeasurePoints { get; set; }
         public DbSet<MeasureValue> MeasureValues { get; set; }
         public DbSet<Unit> Units { get; set; }
+        public DbSet<Location> Locations { get; set; }
 
         public MeasureContext(
             ILogger<MeasureContext> logger,
@@ -101,7 +102,23 @@ namespace com.b_velop.stack.GraphQl.Contexts
                 return null;
             }
         }
-
+        public async Task<object> AddLocationAsync(
+            Location location)
+        {
+            try
+            {
+                location.Id = Guid.NewGuid();
+                location.Created = DateTimeOffset.Now;
+                await Locations.AddAsync(location);
+                await SaveChangesAsync();
+                return location;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(2573, ex, $"Error occurred while persist Location ID: '{location.Id}', Created: '{location.Created}', Display: '{location.Display}', Description: '{location.Description}'", location);
+                return null;
+            }
+        }
         public async Task<MeasurePoint> GetMeasurePointAsync(
             Guid id)
             => await MeasurePoints.FirstOrDefaultAsync(x => x.Id == id);
@@ -113,5 +130,12 @@ namespace com.b_velop.stack.GraphQl.Contexts
         public async Task<object> GetMeasureValueAsync(
             Guid id)
             => await MeasureValues.FirstOrDefaultAsync(x => x.Id == id);
+
+        public async Task<Location> GetLocationAsync(
+            Guid id)
+            => await Locations.FirstOrDefaultAsync(x => x.Id == id);
+
+        public async Task<object> GetLocationsAsync()
+            => await Locations.ToListAsync();
     }
 }
