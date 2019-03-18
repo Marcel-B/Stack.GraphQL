@@ -1,4 +1,5 @@
-﻿using com.b_velop.stack.Classes.Models;
+﻿using System;
+using com.b_velop.stack.Classes.Models;
 using com.b_velop.stack.GraphQl.Contexts;
 using com.b_velop.stack.GraphQl.InputTypes;
 using com.b_velop.stack.GraphQl.Types;
@@ -44,6 +45,32 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 {
                     var unit = context.GetArgument<Unit>("unitType");
                     return measureContext.AddUnitAsync(unit);
+                });
+
+            FieldAsync<UnitType>(
+                "updateUnit",
+                "Update Unit by id",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" },
+                    new QueryArgument<UnitInputType> { Name = "unitType" }
+                    ),
+                resolve: context => {
+                    var id = context.GetArgument<Guid>("id");
+                    var unit = context.GetArgument<Unit>("unitType");
+                    return measureContext.UpdateUnitAsync(id, unit);
+                });
+
+            FieldAsync<MeasurePointType>(
+                "updateMeasurePoint",
+                "Update MeasurePoint by id.",
+                new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" },
+                    new QueryArgument<MeasurePointType> { Name = "measurePointType" }),
+                context =>
+                {
+                    var id = context.GetArgument<Guid>("id");
+                    var measurePoint = context.GetArgument<MeasurePoint>("measurePointType");
+                    return measureContext.UpdateMeasurePointAsync(id, measurePoint);
                 });
 
             FieldAsync<LocationType>(

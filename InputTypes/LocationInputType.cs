@@ -1,9 +1,5 @@
-﻿using com.b_velop.stack.Classes.Models;
-using GraphQL.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using GraphQL.Types;
+using com.b_velop.stack.Classes.Models;
 
 namespace com.b_velop.stack.GraphQl.InputTypes
 {

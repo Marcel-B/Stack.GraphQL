@@ -86,6 +86,49 @@ namespace com.b_velop.stack.GraphQl.Contexts
             }
         }
 
+        public async Task<object> UpdateUnitAsync(
+            Guid id,
+            Unit unit)
+        {
+            try
+            {
+                var tmp = await Units.FirstOrDefaultAsync(x => x.Id == id);
+                tmp.Name = unit.Name;
+                tmp.Display = unit.Display;
+
+                Entry(tmp).State = EntityState.Modified;
+                await SaveChangesAsync();
+                return unit.Id;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(2573, ex, $"Error occurred while updating Unit '{id}'", id, unit);
+                return null;
+            }
+        }
+
+        public async Task<object> UpdateMeasurePointAsync(
+            Guid id,
+            MeasurePoint measurePoint)
+        {
+            try
+            {
+                var mp = await MeasurePoints.FirstOrDefaultAsync(x => x.Id == id);
+                mp.Display = measurePoint.Display;
+                mp.Max = measurePoint.Max;
+                mp.Min = measurePoint.Min;
+                mp.Unit = measurePoint.Unit;
+                Entry(mp).State = EntityState.Modified;
+                await SaveChangesAsync();
+                return mp.Id;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(2573, ex, $"Error occurred whie updating MeasurePoint '{id}'.", id, measurePoint);
+                return null;
+            }
+        }
+
         public async Task<object> AddMeasureValueAsync(
             MeasureValue measureValue)
         {
