@@ -14,6 +14,7 @@ namespace com.b_velop.stack.GraphQl.Types
 
             Field(x => x.Id, type: typeof(NonNullGraphType<IdGraphType>))
                 .Description("The unique identifier of the Entity.");
+
             Field(x => x.State).Description("The state of the Unit.");
             Field(x => x.Timestamp).Description("The time of the last update.");
 
