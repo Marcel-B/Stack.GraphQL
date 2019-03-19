@@ -2,6 +2,7 @@
 using com.b_velop.stack.GraphQl.Contexts;
 using com.b_velop.stack.GraphQl.Types;
 using GraphQL.Types;
+using com.b_velop.stack.Classes.Models;
 
 namespace com.b_velop.stack.GraphQl.Resolver
 {
@@ -11,6 +12,17 @@ namespace com.b_velop.stack.GraphQl.Resolver
             MeasureContext measureContext)
         {
             Name = "Query";
+
+            FieldAsync<ListGraphType<PriorityStateType>>(
+                "priorityStates",
+                "Get all priority states",
+                resolve: context => measureContext.GetPriorityStatesAsync());
+
+            FieldAsync<ListGraphType<BatteryStateType>>(
+                "batteryStates",
+                "Get all battery states",
+                resolve: context => measureContext.GetBatteryStatesAsync());
+
             FieldAsync<ListGraphType<TimeTypeInterface>>(
                 "timeTypeSpan",
                 "Returns Timestamps by Id and TimeSpan",

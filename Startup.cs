@@ -49,6 +49,12 @@ namespace com.b_velop.stack.GraphQl
             services.AddScoped<MeasureValueType>();
             services.AddScoped<MeasureValueInputType>();
 
+            services.AddScoped<PriorityStateType>();
+            services.AddScoped<PriorityStateInputType>();
+
+            services.AddScoped<BatteryStateType>();
+            services.AddScoped<BatteryStateInputType>();
+
             services.AddScoped<MeasurePointType>();
             services.AddScoped<MeasurePointInputType>();
 

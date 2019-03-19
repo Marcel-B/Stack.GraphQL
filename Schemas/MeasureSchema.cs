@@ -11,6 +11,7 @@ namespace com.b_velop.stack.GraphQl.Schemas
         {
             Query = resolver.Resolve<MeasureQuery>();
             Mutation = resolver.Resolve<MeasureMutation>();
+            Subscription = resolver.Resolve<MeasureSubscription>();
         }
     }
 }

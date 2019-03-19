@@ -14,7 +14,7 @@ namespace com.b_velop.stack.GraphQl.Controllers
     [ApiController]
     public class GraphQLController : Controller
     {
-        private ILogger<GraphQLController> _logger;
+        private readonly ILogger<GraphQLController> _logger;
         public GraphQLController(
             ILogger<GraphQLController> logger)
         {

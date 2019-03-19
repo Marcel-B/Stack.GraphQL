@@ -16,6 +16,8 @@ namespace com.b_velop.stack.GraphQl.Contexts
         public DbSet<MeasureValue> MeasureValues { get; set; }
         public DbSet<Unit> Units { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<BatteryState> BatteryStates { get; set; }
+        public DbSet<PriorityState> PriorityStates { get; set; }
 
         public MeasureContext(
             ILogger<MeasureContext> logger,
@@ -36,11 +38,51 @@ namespace com.b_velop.stack.GraphQl.Contexts
                     .Where(x => x.Timestamp >= now)
                     .OrderBy(x => x.Timestamp).ToListAsync();
 
-            foreach (var value in values)
-            {
-                _logger.LogInformation(2571, $"The value is '{value.Value}' Time '{value.Timestamp}' Point: '{value.Point}'");
-            }
             return values;
+        }
+
+        public async Task<object> UpdatePriorityStateAsync(
+            Guid id,
+            PriorityState state)
+        {
+            try
+            {
+                var tmp = await PriorityStates.FirstOrDefaultAsync(x => x.Id == id);
+
+                tmp.State = state.State;
+                tmp.Timestamp = state.Timestamp;
+
+                Entry(tmp).State = EntityState.Modified;
+                await SaveChangesAsync();
+                return tmp.Id;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(2571, ex, $"Error occurred while updating PriorityState '{id}' to '{state?.State}'.", id, state);
+                return null;
+            }
+        }
+
+        public async Task<object> UpdateBatteryStateAsync(
+            Guid id,
+            BatteryState state)
+        {
+            try
+            {
+                var tmp = await BatteryStates.FirstOrDefaultAsync(x => x.Id == id);
+
+                tmp.State = state.State;
+                tmp.Timestamp = state.Timestamp;
+
+                Entry(tmp).State = EntityState.Modified;
+                await SaveChangesAsync();
+                return tmp.Id;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(2571, ex, $"Error occurred while updating BatteryState '{id}' to '{state?.State}'.", id, state);
+                return null;
+            }
         }
 
         public async Task<object> GetUnitsAsync()
@@ -51,6 +93,12 @@ namespace com.b_velop.stack.GraphQl.Contexts
 
         public async Task<object> GetMeasurePointsAsync()
             => await MeasurePoints.ToListAsync();
+
+        public async Task<object> GetPriorityStatesAsync()
+            => await PriorityStates.ToListAsync();
+
+        public async Task<object> GetBatteryStatesAsync()
+            => await BatteryStates.ToListAsync();
 
         public async Task<object> AddMeasurePointAsync(
             MeasurePoint measurePoint)
@@ -64,7 +112,7 @@ namespace com.b_velop.stack.GraphQl.Contexts
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.StackTrace);
+                _logger.LogError(2573, ex, $"Error occurred while add measure point", measurePoint);
                 return null;
             }
         }
@@ -98,7 +146,7 @@ namespace com.b_velop.stack.GraphQl.Contexts
 
                 Entry(tmp).State = EntityState.Modified;
                 await SaveChangesAsync();
-                return unit.Id;
+                return tmp.Id;
             }
             catch (Exception ex)
             {

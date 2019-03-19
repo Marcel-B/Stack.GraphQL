@@ -14,6 +14,34 @@ namespace com.b_velop.stack.GraphQl.Resolver
         {
             Name = "Mutation";
 
+            FieldAsync<BatteryStateType>(
+                "updateBatteryState",
+                "Update the state of the battery.",
+                new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id", Description = "The unique identifier of the battery." },
+                    new QueryArgument<NonNullGraphType<BatteryStateInputType>> { Name = "batteryStateType" }
+                    ),
+                    context =>
+                    {
+                        var id = context.GetArgument<Guid>("id");
+                        var state = context.GetArgument<BatteryState>("batteryStateType");
+                        return measureContext.UpdateBatteryStateAsync(id, state);
+                    });
+
+            FieldAsync<PriorityStateType>(
+                "updatePriorityState",
+                "Update the value of the Priority.",
+                new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id", Description = "The unique identifier of the battery." },
+                    new QueryArgument<NonNullGraphType<PriorityStateInputType>> { Name = "priorityStateType" }
+                    ),
+                    context =>
+                    {
+                        var id = context.GetArgument<Guid>("id");
+                        var state = context.GetArgument<PriorityState>("priorityStateType");
+                        return measureContext.UpdatePriorityStateAsync(id, state);
+                    });
+
             FieldAsync<MeasurePointType>(
                 "createMeasurePoint",
                 arguments: new QueryArguments(
@@ -54,7 +82,8 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" },
                     new QueryArgument<UnitInputType> { Name = "unitType" }
                     ),
-                resolve: context => {
+                resolve: context =>
+                {
                     var id = context.GetArgument<Guid>("id");
                     var unit = context.GetArgument<Unit>("unitType");
                     return measureContext.UpdateUnitAsync(id, unit);
