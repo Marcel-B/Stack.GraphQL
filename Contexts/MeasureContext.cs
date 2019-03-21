@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using com.b_velop.stack.Classes.Models;
-using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
 namespace com.b_velop.stack.GraphQl.Contexts
@@ -18,6 +17,7 @@ namespace com.b_velop.stack.GraphQl.Contexts
         public DbSet<Location> Locations { get; set; }
         public DbSet<BatteryState> BatteryStates { get; set; }
         public DbSet<PriorityState> PriorityStates { get; set; }
+        public DbSet<ActiveMeasurePoint> ActiveMeasurePoints { get; set; }
 
         public MeasureContext(
             ILogger<MeasureContext> logger,
@@ -37,7 +37,6 @@ namespace com.b_velop.stack.GraphQl.Contexts
                     .Where(x => x.Point == id)
                     .Where(x => x.Timestamp >= now)
                     .OrderBy(x => x.Timestamp).ToListAsync();
-
             return values;
         }
 
@@ -100,6 +99,9 @@ namespace com.b_velop.stack.GraphQl.Contexts
         public async Task<object> GetBatteryStatesAsync()
             => await BatteryStates.ToListAsync();
 
+        public async Task<object> GetActiveMeasurePoints()
+            => await ActiveMeasurePoints.ToListAsync();
+
         public async Task<object> AddMeasurePointAsync(
             MeasurePoint measurePoint)
         {
@@ -146,11 +148,33 @@ namespace com.b_velop.stack.GraphQl.Contexts
 
                 Entry(tmp).State = EntityState.Modified;
                 await SaveChangesAsync();
-                return tmp.Id;
+                return tmp;
             }
             catch (Exception ex)
             {
                 _logger.LogError(2573, ex, $"Error occurred while updating Unit '{id}'", id, unit);
+                return null;
+            }
+        }
+
+        public async Task<object> UpdateActiveMeasurePointAsync(
+            Guid id,
+            ActiveMeasurePoint activeMeasurePoint)
+        {
+            try
+            {
+                var tmp = await ActiveMeasurePoints.FirstOrDefaultAsync(x => x.Id == id);
+                tmp.IsActive = activeMeasurePoint.IsActive;
+                tmp.LastValue = activeMeasurePoint.LastValue;
+                tmp.Updated = activeMeasurePoint.Updated;
+
+                Entry(tmp).State = EntityState.Modified;
+                await SaveChangesAsync();
+                return tmp;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(2573, ex, $"Error occurred while updating ActiveMeasurePoint '{id}.'", id, activeMeasurePoint);
                 return null;
             }
         }
@@ -190,6 +214,22 @@ namespace com.b_velop.stack.GraphQl.Contexts
             catch (Exception ex)
             {
                 _logger.LogError(2573, ex, $"Error occurred while persist MeasureValue ID: '{measureValue.Id}', Timestamp: '{measureValue.Timestamp}', Value: '{measureValue.Value}', PointID: '{measureValue.Point}'", measureValue);
+                return null;
+            }
+        }
+
+        public async Task<object> AddActiveMeasurePoint(
+            ActiveMeasurePoint activeMeasurePoint)
+        {
+            try
+            {
+                await ActiveMeasurePoints.AddAsync(activeMeasurePoint);
+                await SaveChangesAsync();
+                return activeMeasurePoint;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(2573, ex, $"Error occurred while persist ActiveMeasurePoint '{activeMeasurePoint.Id}'.", activeMeasurePoint);
                 return null;
             }
         }

@@ -23,6 +23,11 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 "Get all battery states",
                 resolve: context => measureContext.GetBatteryStatesAsync());
 
+            FieldAsync<ListGraphType<ActiveMeasurePointType>>(
+                "activeMeasurePoints",
+                "Get all ActiveMeasurePoints entitys",
+                resolve: context => measureContext.GetActiveMeasurePoints());
+
             FieldAsync<ListGraphType<TimeTypeInterface>>(
                 "timeTypeSpan",
                 "Returns Timestamps by Id and TimeSpan",
