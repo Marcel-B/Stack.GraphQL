@@ -11,7 +11,10 @@ namespace com.b_velop.stack.GraphQl.InputTypes
     {
         public ActiveMeasurePointInputType()
         {
-
+            Name = "ActiveMeasurePointInput";
+            Field(x => x.IsActive);
+            Field(x => x.Point, type: typeof(NonNullGraphType<IdGraphType>));
+            Field(x => x.LastValue);
         }
     }
 }

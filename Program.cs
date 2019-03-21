@@ -13,7 +13,7 @@ namespace com.b_velop.stack.GraphQl
         {
             var metricServer = new MetricPusher(
                 endpoint: "https://push.qaybe.de/metrics",
-                job: "graphql");
+                job: "stack_graphql");
             metricServer.Start();
             // NLog: setup the logger first to catch all errors
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
