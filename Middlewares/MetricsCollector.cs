@@ -31,7 +31,8 @@ namespace com.b_velop.stack.GraphQl.Middlewares
             _next = next;
         }
 
-        public Task Invoke(HttpContext httpContext)
+        public Task Invoke(
+            HttpContext httpContext)
         {
 
             Counter.WithLabels(httpContext.Request.Path, httpContext.Request.Method).Inc();
