@@ -11,7 +11,7 @@ namespace com.b_velop.stack.GraphQl.Middlewares
     {
         private readonly RequestDelegate _next;
         public static Gauge Gauge = Metrics.CreateGauge(
-            "b_velop_stack_datalayer_request_duration",
+            "b_velop_stack_datalayer_requests_duration",
             "duration of requests",
             new GaugeConfiguration
             {
@@ -19,7 +19,7 @@ namespace com.b_velop.stack.GraphQl.Middlewares
             });
 
         public static Counter Counter = Metrics.CreateCounter(
-            "b_velop_stack_datalayer_request_total",
+            "b_velop_stack_datalayer_requests_total",
             "duration of requests",
             new CounterConfiguration
             {
