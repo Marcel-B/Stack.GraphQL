@@ -10,7 +10,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
     public class MeasureMutation : ObjectGraphType
     {
         public MeasureMutation(
-            MeasureContext measureContext)
+            MeasureStore measureContext)
         {
             Name = "Mutation";
 

@@ -9,7 +9,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
     public class MeasureQuery : ObjectGraphType<object>
     {
         public MeasureQuery(
-            MeasureContext measureContext)
+            MeasureStore measureContext)
         {
             Name = "Query";
 

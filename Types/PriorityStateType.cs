@@ -7,7 +7,7 @@ namespace com.b_velop.stack.GraphQl.Types
     public class PriorityStateType : ObjectGraphType<PriorityState>
     {
         public PriorityStateType(
-            MeasureContext measure)
+            MeasureStore measure)
         {
             Name = "PriorityState";
             Description = "State of Priority values.";

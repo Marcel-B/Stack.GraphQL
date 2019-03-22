@@ -4,28 +4,22 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using com.b_velop.stack.Classes.Models;
 using Microsoft.Extensions.Logging;
+using com.b_velop.stack.DataContext.Abstract;
 
 namespace com.b_velop.stack.GraphQl.Contexts
 {
-    public class MeasureContext : DbContext
+    public class MeasureStore
     {
-        private ILogger<MeasureContext> _logger;
+        private MeasureContext _measureContext;
+        private ILogger<MeasureStore> _logger;
 
-        public DbSet<MeasurePoint> MeasurePoints { get; set; }
-        public DbSet<MeasureValue> MeasureValues { get; set; }
-        public DbSet<Unit> Units { get; set; }
-        public DbSet<Location> Locations { get; set; }
-        public DbSet<BatteryState> BatteryStates { get; set; }
-        public DbSet<PriorityState> PriorityStates { get; set; }
-        public DbSet<ActiveMeasurePoint> ActiveMeasurePoints { get; set; }
-
-        public MeasureContext(
-            ILogger<MeasureContext> logger,
-            DbContextOptions<MeasureContext> context) : base(context)
+        public MeasureStore(
+            MeasureContext context,
+            ILogger<MeasureStore> logger)
         {
+            _measureContext = context;
             _logger = logger;
         }
-
         public async Task<object> GetTimeTypeByTimeAsync(
             int getArgument,
             Guid id)
@@ -33,7 +27,7 @@ namespace com.b_velop.stack.GraphQl.Contexts
             _logger.LogInformation(2571, $"Try to get '{id}' '{getArgument}'");
 
             var now = DateTimeOffset.Now.AddSeconds(-getArgument);
-            var values = await MeasureValues
+            var values = await _measureContext.MeasureValues
                     .Where(x => x.Point == id)
                     .Where(x => x.Timestamp >= now)
                     .OrderBy(x => x.Timestamp).ToListAsync();
@@ -46,13 +40,13 @@ namespace com.b_velop.stack.GraphQl.Contexts
         {
             try
             {
-                var tmp = await PriorityStates.FirstOrDefaultAsync(x => x.Id == id);
+                var tmp = await _measureContext.PriorityStates.FirstOrDefaultAsync(x => x.Id == id);
 
                 tmp.State = state.State;
                 tmp.Timestamp = state.Timestamp;
 
-                Entry(tmp).State = EntityState.Modified;
-                await SaveChangesAsync();
+                _measureContext.Entry(tmp).State = EntityState.Modified;
+                await _measureContext.SaveChangesAsync();
                 return tmp.Id;
             }
             catch (Exception ex)
@@ -68,13 +62,13 @@ namespace com.b_velop.stack.GraphQl.Contexts
         {
             try
             {
-                var tmp = await BatteryStates.FirstOrDefaultAsync(x => x.Id == id);
+                var tmp = await _measureContext.BatteryStates.FirstOrDefaultAsync(x => x.Id == id);
 
                 tmp.State = state.State;
                 tmp.Timestamp = state.Timestamp;
 
-                Entry(tmp).State = EntityState.Modified;
-                await SaveChangesAsync();
+                _measureContext.Entry(tmp).State = EntityState.Modified;
+                await _measureContext.SaveChangesAsync();
                 return tmp.Id;
             }
             catch (Exception ex)
@@ -85,22 +79,22 @@ namespace com.b_velop.stack.GraphQl.Contexts
         }
 
         public async Task<object> GetUnitsAsync()
-            => await Units.ToListAsync();
+            => await _measureContext.Units.ToListAsync();
 
         public async Task<object> GetMeasureValuesAsync()
-            => await MeasureValues.ToListAsync();
+            => await _measureContext.MeasureValues.ToListAsync();
 
         public async Task<object> GetMeasurePointsAsync()
-            => await MeasurePoints.ToListAsync();
+            => await _measureContext.MeasurePoints.ToListAsync();
 
         public async Task<object> GetPriorityStatesAsync()
-            => await PriorityStates.ToListAsync();
+            => await _measureContext.PriorityStates.ToListAsync();
 
         public async Task<object> GetBatteryStatesAsync()
-            => await BatteryStates.ToListAsync();
+            => await _measureContext.BatteryStates.ToListAsync();
 
         public async Task<object> GetActiveMeasurePoints()
-            => await ActiveMeasurePoints.ToListAsync();
+            => await _measureContext.ActiveMeasurePoints.ToListAsync();
 
         public async Task<object> AddMeasurePointAsync(
             MeasurePoint measurePoint)
@@ -108,8 +102,8 @@ namespace com.b_velop.stack.GraphQl.Contexts
             try
             {
                 measurePoint.Id = Guid.NewGuid();
-                await MeasurePoints.AddAsync(measurePoint);
-                await SaveChangesAsync();
+                await _measureContext.MeasurePoints.AddAsync(measurePoint);
+                await _measureContext.SaveChangesAsync();
                 return measurePoint;
             }
             catch (Exception ex)
@@ -125,8 +119,8 @@ namespace com.b_velop.stack.GraphQl.Contexts
             try
             {
                 unit.Id = Guid.NewGuid();
-                await Units.AddAsync(unit);
-                await SaveChangesAsync();
+                await _measureContext.Units.AddAsync(unit);
+                await _measureContext.SaveChangesAsync();
                 return unit;
             }
             catch (Exception ex)
@@ -142,12 +136,12 @@ namespace com.b_velop.stack.GraphQl.Contexts
         {
             try
             {
-                var tmp = await Units.FirstOrDefaultAsync(x => x.Id == id);
+                var tmp = await _measureContext.Units.FirstOrDefaultAsync(x => x.Id == id);
                 tmp.Name = unit.Name;
                 tmp.Display = unit.Display;
 
-                Entry(tmp).State = EntityState.Modified;
-                await SaveChangesAsync();
+                _measureContext.Entry(tmp).State = EntityState.Modified;
+                await _measureContext.SaveChangesAsync();
                 return tmp;
             }
             catch (Exception ex)
@@ -163,13 +157,13 @@ namespace com.b_velop.stack.GraphQl.Contexts
         {
             try
             {
-                var tmp = await ActiveMeasurePoints.FirstOrDefaultAsync(x => x.Id == id);
+                var tmp = await _measureContext.ActiveMeasurePoints.FirstOrDefaultAsync(x => x.Id == id);
                 tmp.IsActive = activeMeasurePoint.IsActive;
                 tmp.LastValue = activeMeasurePoint.LastValue;
                 tmp.Updated = activeMeasurePoint.Updated;
 
-                Entry(tmp).State = EntityState.Modified;
-                await SaveChangesAsync();
+                _measureContext.Entry(tmp).State = EntityState.Modified;
+                await _measureContext.SaveChangesAsync();
                 return tmp;
             }
             catch (Exception ex)
@@ -185,13 +179,13 @@ namespace com.b_velop.stack.GraphQl.Contexts
         {
             try
             {
-                var mp = await MeasurePoints.FirstOrDefaultAsync(x => x.Id == id);
+                var mp = await _measureContext.MeasurePoints.FirstOrDefaultAsync(x => x.Id == id);
                 mp.Display = measurePoint.Display;
                 mp.Max = measurePoint.Max;
                 mp.Min = measurePoint.Min;
                 mp.Unit = measurePoint.Unit;
-                Entry(mp).State = EntityState.Modified;
-                await SaveChangesAsync();
+                _measureContext.Entry(mp).State = EntityState.Modified;
+                await _measureContext.SaveChangesAsync();
                 return mp.Id;
             }
             catch (Exception ex)
@@ -207,8 +201,8 @@ namespace com.b_velop.stack.GraphQl.Contexts
             try
             {
                 measureValue.Id = Guid.NewGuid();
-                await MeasureValues.AddAsync(measureValue);
-                await SaveChangesAsync();
+                await _measureContext.MeasureValues.AddAsync(measureValue);
+                await _measureContext.SaveChangesAsync();
                 return measureValue;
             }
             catch (Exception ex)
@@ -223,8 +217,8 @@ namespace com.b_velop.stack.GraphQl.Contexts
         {
             try
             {
-                await ActiveMeasurePoints.AddAsync(activeMeasurePoint);
-                await SaveChangesAsync();
+                await _measureContext.ActiveMeasurePoints.AddAsync(activeMeasurePoint);
+                await _measureContext.SaveChangesAsync();
                 return activeMeasurePoint;
             }
             catch (Exception ex)
@@ -241,8 +235,8 @@ namespace com.b_velop.stack.GraphQl.Contexts
             {
                 location.Id = Guid.NewGuid();
                 location.Created = DateTimeOffset.Now;
-                await Locations.AddAsync(location);
-                await SaveChangesAsync();
+                await _measureContext.Locations.AddAsync(location);
+                await _measureContext.SaveChangesAsync();
                 return location;
             }
             catch (Exception ex)
@@ -254,21 +248,21 @@ namespace com.b_velop.stack.GraphQl.Contexts
 
         public async Task<MeasurePoint> GetMeasurePointAsync(
           Guid id)
-          => await MeasurePoints.FirstOrDefaultAsync(x => x.Id == id);
+          => await _measureContext.MeasurePoints.FirstOrDefaultAsync(x => x.Id == id);
 
         public async Task<Unit> GetUnitAsync(
             Guid id)
-            => await Units.FirstOrDefaultAsync(x => x.Id == id);
+            => await _measureContext.Units.FirstOrDefaultAsync(x => x.Id == id);
 
         public async Task<object> GetMeasureValueAsync(
             Guid id)
-            => await MeasureValues.FirstOrDefaultAsync(x => x.Id == id);
+            => await _measureContext.MeasureValues.FirstOrDefaultAsync(x => x.Id == id);
 
         public async Task<Location> GetLocationAsync(
             Guid id)
-            => await Locations.FirstOrDefaultAsync(x => x.Id == id);
+            => await _measureContext.Locations.FirstOrDefaultAsync(x => x.Id == id);
 
         public async Task<object> GetLocationsAsync()
-            => await Locations.ToListAsync();
+            => await _measureContext.Locations.ToListAsync();
     }
 }

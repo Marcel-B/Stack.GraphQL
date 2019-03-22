@@ -7,7 +7,7 @@ namespace com.b_velop.stack.GraphQl.Types
         public class ActiveMeasurePointType : ObjectGraphType<ActiveMeasurePoint>
     {
         public ActiveMeasurePointType(
-            MeasureContext measureContext)
+            MeasureStore measureContext)
         {
             Name = "ActiveMeasurePoint";
             Description = "Points to active MeasurePoints";

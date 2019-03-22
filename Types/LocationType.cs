@@ -7,7 +7,7 @@ namespace com.b_velop.stack.GraphQl.Types
     public class LocationType : ObjectGraphType<Location>
     {
         public LocationType(
-            MeasureContext measureContext)
+            MeasureStore measureContext)
         {
             Name = "Location";
             Description = "A Location";

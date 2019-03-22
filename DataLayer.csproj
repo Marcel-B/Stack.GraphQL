@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DataContext" Version="0.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
 <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
 <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.7.0" />

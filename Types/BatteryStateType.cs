@@ -7,7 +7,7 @@ namespace com.b_velop.stack.GraphQl.Types
     public partial class BatteryStateType : ObjectGraphType<BatteryState>
     {
         public BatteryStateType(
-            MeasureContext measure)
+            MeasureStore measure)
         {
             Name = "BatteryState";
             Description = "State of Battery value.";

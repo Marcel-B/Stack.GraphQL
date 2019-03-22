@@ -6,7 +6,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
     public class MeasureSubscription : ObjectGraphType<object>
     {
         public MeasureSubscription(
-            MeasureContext measure)
+            MeasureStore measure)
         {
             Name = "Subscription";
         }

@@ -7,7 +7,7 @@ namespace com.b_velop.stack.GraphQl.Types
     public class UnitType : ObjectGraphType<Unit>
     {
         public UnitType(
-            MeasureContext measureContext)
+            MeasureStore measureContext)
         {
             Name = "Unit";
             Description = "A unit within max and min value.";

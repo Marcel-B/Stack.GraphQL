@@ -7,7 +7,7 @@ namespace com.b_velop.stack.GraphQl.Types
     public class MeasurePointType : ObjectGraphType<MeasurePoint>
     {
         public MeasurePointType(
-            MeasureContext measureContext)
+            MeasureStore measureContext)
         {
             Name = "MeasurePoint";
             Description = "A point that produces measure values.";
