@@ -38,6 +38,7 @@ namespace com.b_velop.stack.GraphQl
 
             services.AddScoped<MeasureQuery>();
             services.AddScoped<MeasureMutation>();
+            services.AddScoped<MeasureSubscription>();
 
             services.AddScoped<UnitType>();
             services.AddScoped<UnitInputType>();
@@ -53,6 +54,9 @@ namespace com.b_velop.stack.GraphQl
 
             services.AddScoped<BatteryStateType>();
             services.AddScoped<BatteryStateInputType>();
+
+            services.AddScoped<ActiveMeasurePointType>();
+            services.AddScoped<ActiveMeasurePointInputType>();
 
             services.AddScoped<MeasurePointType>();
             services.AddScoped<MeasurePointInputType>();
