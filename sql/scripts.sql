@@ -13,58 +13,69 @@ SELECT * FROM ClientSecrets;
 USE Measure;
 
 CREATE TABLE Measure.dbo.Units (
-    Id uniqueidentifier NOT NULL,
-    Display varchar(100) NOT NULL,
-    Name varchar(100) NOT NULL,
-    CONSTRAINT Units_PK PRIMARY KEY (Id)
+	Id uniqueidentifier DEFAULT NEWID() NOT NULL,
+	Display varchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	Name varchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	Created datetimeoffset DEFAULT sysdatetimeoffset() NULL,
+	Updated datetimeoffset DEFAULT sysdatetimeoffset() NULL,
+	CONSTRAINT Units_PK PRIMARY KEY (Id)
 );
 
 CREATE TABLE Measure.dbo.Locations (
-    Id uniqueidentifier NOT NULL,
-    Display varchar(50) NOT NULL,
-    Description varchar(250) NOT NULL,
-    Longitude float NULL,
-    Latitude float NULL,
-    Floor int NULL,
-    Created datetimeoffset NOT NULL,
-    CONSTRAINT Locations_PK PRIMARY KEY (Id)
+	Id uniqueidentifier DEFAULT NEWID() NOT NULL,
+	Display varchar(50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	Description varchar(250) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	Longitude float NULL,
+	Latitude float NULL,
+	Floor int NULL,
+	Created datetimeoffset DEFAULT sysdatetimeoffset() NULL,
+	Updated datetimeoffset DEFAULT sysdatetimeoffset() NULL,
+	CONSTRAINT Locations_PK PRIMARY KEY (Id)
 );
 
+
 CREATE TABLE Measure.dbo.MeasurePoints (
-    Id uniqueidentifier NOT NULL,
-    Display varchar(100) NOT NULL,
-    Max float DEFAULT 0 NOT NULL,
-    Min float DEFAULT 0 NOT NULL,
-    Unit uniqueidentifier NOT NULL,
-    CONSTRAINT MeasurePoints_PK PRIMARY KEY (Id),
-    CONSTRAINT MeasurePoints_Units_FK FOREIGN KEY (Unit) REFERENCES Measure.dbo.Units(Id) ON DELETE CASCADE ON UPDATE CASCADE
+	Id uniqueidentifier DEFAULT NEWID() NOT NULL,
+	Display varchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	Max float DEFAULT 0 NOT NULL,
+	Min float DEFAULT 0 NOT NULL,
+	Unit uniqueidentifier NOT NULL,
+	Location uniqueidentifier NULL,
+	ExternId varchar(50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	Created datetimeoffset DEFAULT sysdatetimeoffset() NULL,
+	Updated datetimeoffset DEFAULT sysdatetimeoffset() NULL,
+	CONSTRAINT MeasurePoints_PK PRIMARY KEY (Id),
+	CONSTRAINT MeasurePoints_Locations_FK FOREIGN KEY (Location) REFERENCES Measure.dbo.Locations(Id),
+	CONSTRAINT MeasurePoints_Units_FK FOREIGN KEY (Unit) REFERENCES Measure.dbo.Units(Id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 ALTER TABLE Measure.dbo.MeasurePoints ADD Location uniqueidentifier NULL;
 ALTER TABLE Measure.dbo.MeasurePoints ADD CONSTRAINT MeasurePoints_Locations_FK FOREIGN KEY (Location) REFERENCES Measure.dbo.Locations(Id);
 
 CREATE TABLE Measure.dbo.MeasureValues (
-    Id uniqueidentifier NOT NULL,
-    [Timestamp] datetimeoffset NOT NULL,
-    Value float NOT NULL,
-    Point uniqueidentifier NOT NULL,
-    CONSTRAINT MeasureValues_PK PRIMARY KEY (Id),
-    CONSTRAINT MeasureValues_MeasurePoints_FK FOREIGN KEY (Point) REFERENCES Measure.dbo.MeasurePoints(Id) ON DELETE CASCADE ON UPDATE CASCADE
+	Id uniqueidentifier DEFAULT NEWID() NOT NULL,
+	[Timestamp] datetimeoffset NOT NULL,
+	Value float NOT NULL,
+	Point uniqueidentifier NOT NULL,
+	Updated datetimeoffset DEFAULT sysdatetimeoffset() NULL,
+	CONSTRAINT MeasureValues_PK PRIMARY KEY (Id),
+	CONSTRAINT MeasureValues_MeasurePoints_FK FOREIGN KEY (Point) REFERENCES Measure.dbo.MeasurePoints(Id) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
 CREATE INDEX MeasureValues_Timestamp_IDX ON Measure.dbo.MeasureValues ([Timestamp]);
 
+
 CREATE TABLE Measure.dbo.BatteryStates (
-	Id uniqueidentifier NOT NULL,
+	Id uniqueidentifier DEFAULT NEWID() NOT NULL,
 	[Timestamp] datetimeoffset NOT NULL,
 	State bit NOT NULL,
 	Point uniqueidentifier NOT NULL,
+	Updated datetimeoffset DEFAULT sysdatetimeoffset() NULL,
 	CONSTRAINT BatteryStates_PK PRIMARY KEY (Id),
 	CONSTRAINT BatteryStates_MeasurePoints_FK FOREIGN KEY (Point) REFERENCES Measure.dbo.MeasurePoints(Id)
 );
 
 CREATE TABLE Measure.dbo.PriorityStates (
-	Id uniqueidentifier NOT NULL,
+	Id uniqueidentifier DEFAULT NEWID() NOT NULL,
 	[Timestamp] datetimeoffset NOT NULL,
 	State bit NOT NULL,
 	Point uniqueidentifier NOT NULL,
@@ -73,11 +84,12 @@ CREATE TABLE Measure.dbo.PriorityStates (
 );
 
 CREATE TABLE Measure.dbo.ActiveMeasurePoints (
-	Id uniqueidentifier NOT NULL,
+	Id uniqueidentifier DEFAULT NEWID() NOT NULL,
 	IsActive bit NOT NULL,
 	LastValue float NOT NULL,
-	Updated datetimeoffset NOT NULL,
 	Point uniqueidentifier NOT NULL,
+	Created datetimeoffset DEFAULT sysdatetimeoffset() NULL,
+	Updated datetimeoffset DEFAULT sysdatetimeoffset() NULL,
 	CONSTRAINT ActiveMeasurePoints_PK PRIMARY KEY (Id),
 	CONSTRAINT ActiveMeasurePoints_MeasurePoints_FK FOREIGN KEY (Point) REFERENCES Measure.dbo.MeasurePoints(Id)
 );
