@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using com.b_velop.stack.DataContext.Abstract;
-using com.b_velop.stack.GraphQl.Contexts;
+using com.b_velop.stack.DataContext.Entities;
+using com.b_velop.stack.DataContext.Repository;
 using com.b_velop.stack.GraphQl.InputTypes;
 using com.b_velop.stack.GraphQl.Middlewares;
 using com.b_velop.stack.GraphQl.Resolver;
@@ -32,41 +33,37 @@ namespace com.b_velop.stack.GraphQl
         public void ConfigureServices(
             IServiceCollection services)
         {
-            services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
-
-            services.AddScoped<IDocumentExecuter, DocumentExecuter>();
-            services.AddScoped<IDocumentWriter, DocumentWriter>();
-
-            services.AddScoped<MeasureQuery>();
-            services.AddScoped<MeasureMutation>();
-            services.AddScoped<MeasureSubscription>();
-
-            services.AddScoped<UnitType>();
-            services.AddScoped<UnitInputType>();
-
-            services.AddScoped<LocationType>();
-            services.AddScoped<LocationInputType>();
-
-            services.AddScoped<MeasureValueType>();
-            services.AddScoped<MeasureValueInputType>();
-
-            services.AddScoped<PriorityStateType>();
-            services.AddScoped<PriorityStateInputType>();
-
-            services.AddScoped<BatteryStateType>();
-            services.AddScoped<BatteryStateInputType>();
-
-            services.AddScoped<ActiveMeasurePointType>();
-            services.AddScoped<ActiveMeasurePointInputType>();
-
-            services.AddScoped<MeasurePointType>();
-            services.AddScoped<MeasurePointInputType>();
-
-            services.AddScoped<TimeTypeInterface>();
-
-            services.AddScoped<ISchema, MeasureSchema>();
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService))
+                .AddScoped<IDocumentExecuter, DocumentExecuter>()
+                .AddScoped<IDocumentWriter, DocumentWriter>()
+                .AddScoped<MeasureQuery>()
+                .AddScoped<MeasureMutation>()
+                .AddScoped<MeasureSubscription>()
+                .AddScoped<UnitType>()
+                .AddScoped<UnitInputType>()
+                .AddScoped<LocationType>()
+                .AddScoped<LocationInputType>()
+                .AddScoped<MeasureValueType>()
+                .AddScoped<MeasureValueInputType>()
+                .AddScoped<PriorityStateType>()
+                .AddScoped<PriorityStateInputType>()
+                .AddScoped<BatteryStateType>()
+                .AddScoped<BatteryStateInputType>()
+                .AddScoped<ActiveMeasurePointType>()
+                .AddScoped<ActiveMeasurePointInputType>()
+                .AddScoped<MeasurePointType>()
+                .AddScoped<MeasurePointInputType>()
+                .AddScoped<TimeTypeInterface>()
+                .AddScoped<ISchema, MeasureSchema>()
+                .AddScoped<IDataStore<ActiveMeasurePoint>, ActiveMeasurePointRepository>()
+                .AddScoped<IDataStore<BatteryState>, BatteryStateRepository>()
+                .AddScoped<IDataStore<Location>, LocationRepository>()
+                .AddScoped<IDataStore<MeasurePoint>, MeasurePointRepository>()
+                .AddScoped<IDataStore<MeasureValue>, MeasureValueRepository>()
+                .AddScoped<IDataStore<PriorityState>, PriorityStateRepository>()
+                .AddScoped<IDataStore<Unit>, UnitRepository>()
+                .AddScoped<ITimeDataStore<MeasureValue>, MeasureValueRepository>()
+                .AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 #if DEBUG
             services.AddDbContext<MeasureContext>(option =>

@@ -1,5 +1,5 @@
-﻿using GraphQL.Types;
-using com.b_velop.stack.Classes.Models;
+﻿using com.b_velop.stack.DataContext.Entities;
+using GraphQL.Types;
 
 namespace com.b_velop.stack.GraphQl.InputTypes
 {
@@ -13,6 +13,8 @@ namespace com.b_velop.stack.GraphQl.InputTypes
             Field(x => x.Floor, nullable: true);
             Field(x => x.Longitude, nullable: true);
             Field(x => x.Latitude, nullable: true);
+            Field(x => x.Created, nullable: true);
+            Field(x => x.Updated, nullable: true);
         }
     }
 }

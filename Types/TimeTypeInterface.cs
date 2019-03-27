@@ -1,4 +1,4 @@
-﻿using com.b_velop.stack.Classes.Models;
+﻿using com.b_velop.stack.DataContext.Entities;
 using GraphQL.Types;
 
 namespace com.b_velop.stack.GraphQl.Types

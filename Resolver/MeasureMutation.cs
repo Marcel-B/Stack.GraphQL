@@ -1,6 +1,6 @@
 ﻿using System;
-using com.b_velop.stack.Classes.Models;
-using com.b_velop.stack.GraphQl.Contexts;
+using com.b_velop.stack.DataContext.Entities;
+using com.b_velop.stack.DataContext.Repository;
 using com.b_velop.stack.GraphQl.InputTypes;
 using com.b_velop.stack.GraphQl.Types;
 using GraphQL.Types;
@@ -10,10 +10,17 @@ namespace com.b_velop.stack.GraphQl.Resolver
     public class MeasureMutation : ObjectGraphType
     {
         public MeasureMutation(
-            MeasureStore measureContext)
+            IDataStore<BatteryState> batteryStateRepository,
+            IDataStore<ActiveMeasurePoint> activeMeasurePointRepository,
+            IDataStore<MeasurePoint> measurePointRepository,
+            IDataStore<PriorityState> priorityStateRepostiory,
+            IDataStore<Location> locationRepository,
+            IDataStore<Unit> unitRepository,
+            IDataStore<MeasureValue> measureValueRepository)
         {
             Name = "Mutation";
 
+            #region Update
             FieldAsync<BatteryStateType>(
                 "updateBatteryState",
                 "Update the state of the battery.",
@@ -21,11 +28,11 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id", Description = "The unique identifier of the battery." },
                     new QueryArgument<NonNullGraphType<BatteryStateInputType>> { Name = "batteryStateType" }
                     ),
-                    context =>
+                    async context =>
                     {
                         var id = context.GetArgument<Guid>("id");
                         var state = context.GetArgument<BatteryState>("batteryStateType");
-                        return measureContext.UpdateBatteryStateAsync(id, state);
+                        return await batteryStateRepository.UpdateAsync(id, state);
                     });
 
             FieldAsync<PriorityStateType>(
@@ -35,58 +42,25 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id", Description = "The unique identifier of the battery." },
                     new QueryArgument<NonNullGraphType<PriorityStateInputType>> { Name = "priorityStateType" }
                     ),
-                    context =>
+                    async context =>
                     {
                         var id = context.GetArgument<Guid>("id");
                         var state = context.GetArgument<PriorityState>("priorityStateType");
-                        return measureContext.UpdatePriorityStateAsync(id, state);
+                        return await priorityStateRepostiory.UpdateAsync(id, state);
                     });
-
-            FieldAsync<MeasurePointType>(
-                "createMeasurePoint",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<MeasurePointInputType>> { Name = "measurePointType" }
-                ),
-                resolve: context =>
-                {
-                    var measurePoint = context.GetArgument<MeasurePoint>("measurePointType");
-                    return measureContext.AddMeasurePointAsync(measurePoint);
-                });
-
-            FieldAsync<MeasureValueType>(
-                "createMeasureValue",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<MeasureValueInputType>> { Name = "measureValueType" }
-                    ),
-                resolve: context =>
-                {
-                    var measureValue = context.GetArgument<MeasureValue>("measureValueType");
-                    return measureContext.AddMeasureValueAsync(measureValue);
-                });
-
-            FieldAsync<UnitType>(
-                "createUnit",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<UnitInputType>> { Name = "unitType" }
-                    ),
-                resolve: context =>
-                {
-                    var unit = context.GetArgument<Unit>("unitType");
-                    return measureContext.AddUnitAsync(unit);
-                });
 
             FieldAsync<UnitType>(
                 "updateUnit",
                 "Update Unit by id",
-                arguments: new QueryArguments(
+                new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" },
                     new QueryArgument<UnitInputType> { Name = "unitType" }
                     ),
-                resolve: context =>
+                resolve: async context =>
                 {
                     var id = context.GetArgument<Guid>("id");
                     var unit = context.GetArgument<Unit>("unitType");
-                    return measureContext.UpdateUnitAsync(id, unit);
+                    return await unitRepository.UpdateAsync(id, unit);
                 });
 
             FieldAsync<MeasurePointType>(
@@ -95,11 +69,58 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" },
                     new QueryArgument<MeasurePointType> { Name = "measurePointType" }),
-                context =>
+                async context =>
                 {
                     var id = context.GetArgument<Guid>("id");
                     var measurePoint = context.GetArgument<MeasurePoint>("measurePointType");
-                    return measureContext.UpdateMeasurePointAsync(id, measurePoint);
+                    return await measurePointRepository.UpdateAsync(id, measurePoint);
+                });
+            #endregion
+
+            #region Create
+            FieldAsync<MeasurePointType>(
+                "createMeasurePoint",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<MeasurePointInputType>> { Name = "measurePointType" }
+                ),
+                resolve: async context =>
+                {
+                    var measurePoint = context.GetArgument<MeasurePoint>("measurePointType");
+
+                    measurePoint.Id = Guid.NewGuid();
+                    measurePoint.Created = DateTimeOffset.Now;
+
+                    return await measurePointRepository.SaveAsync(measurePoint);
+                });
+
+            FieldAsync<MeasureValueType>(
+                "createMeasureValue",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<MeasureValueInputType>> { Name = "measureValueType" }
+                    ),
+                resolve: async context =>
+                {
+                    var measureValue = context.GetArgument<MeasureValue>("measureValueType");
+
+                    measureValue.Id = Guid.NewGuid();
+                    measureValue.Timestamp = DateTimeOffset.Now;
+
+                    return await measureValueRepository.SaveAsync(measureValue);
+                });
+
+            FieldAsync<UnitType>(
+                "createUnit",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<UnitInputType>> { Name = "unitType" }
+                    ),
+                resolve: async context =>
+                {
+                    var unit = context.GetArgument<Unit>("unitType");
+
+                    unit.Id = Guid.NewGuid();
+                    unit.Created = DateTimeOffset.Now;
+
+                    return await unitRepository.SaveAsync(unit);
                 });
 
             FieldAsync<LocationType>(
@@ -107,11 +128,16 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<LocationInputType>> { Name = "locationType" }
                     ),
-                resolve: context =>
+                resolve: async context =>
                 {
                     var location = context.GetArgument<Location>("locationType");
-                    return measureContext.AddLocationAsync(location);
+
+                    location.Id = Guid.NewGuid();
+                    location.Created = DateTimeOffset.Now;
+
+                    return await locationRepository.SaveAsync(location);
                 });
+            #endregion
         }
     }
 }
