@@ -17,6 +17,7 @@ namespace com.b_velop.stack.GraphQl.Types
 
             Field(x => x.State).Description("The state of the Unit.");
             Field(x => x.Timestamp).Description("The time of the last update.");
+            Field(x => x.Created, nullable: true).Description("The time of creation.");
             Field(x => x.Updated, nullable: true).Description("The update time of the BatteryState");
 
             FieldAsync<MeasurePointType, MeasurePoint>(
