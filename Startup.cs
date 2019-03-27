@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.InteropServices;
 using com.b_velop.stack.DataContext.Abstract;
 using com.b_velop.stack.DataContext.Entities;
 using com.b_velop.stack.DataContext.Repository;
@@ -66,10 +67,22 @@ namespace com.b_velop.stack.GraphQl
                 .AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 #if DEBUG
-            services.AddDbContext<MeasureContext>(option =>
+            var isWindows = System.Runtime.InteropServices.RuntimeInformation
+                .IsOSPlatform(OSPlatform.Windows);
+            if (isWindows)
             {
-                option.UseSqlServer(Configuration.GetConnectionString("default"));
-            });
+                services.AddDbContext<MeasureContext>(option =>
+                {
+                    option.UseSqlServer(Configuration.GetConnectionString("win"));
+                });
+            }
+            else
+            {
+                services.AddDbContext<MeasureContext>(option =>
+                {
+                    option.UseSqlServer(Configuration.GetConnectionString("default"));
+                });
+            }
 #else
             services.AddDbContext<MeasureContext>(option =>
             {
