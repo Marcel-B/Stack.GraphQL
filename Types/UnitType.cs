@@ -1,13 +1,11 @@
-﻿using com.b_velop.stack.Classes.Models;
-using com.b_velop.stack.GraphQl.Contexts;
+﻿using com.b_velop.stack.DataContext.Entities;
 using GraphQL.Types;
 
 namespace com.b_velop.stack.GraphQl.Types
 {
     public class UnitType : ObjectGraphType<Unit>
     {
-        public UnitType(
-            MeasureContext measureContext)
+        public UnitType()
         {
             Name = "Unit";
             Description = "A unit within max and min value.";
@@ -15,7 +13,8 @@ namespace com.b_velop.stack.GraphQl.Types
             Field(x => x.Id, type: typeof(NonNullGraphType<IdGraphType>)).Description("The unique identifier of the unit.");
             Field(x => x.Display).Description("The displayed name of the Unit.");
             Field(x => x.Name).Description("The short name of the Unit.");
-
+            Field(x => x.Created, nullable: true).Description("The creation of the Unit");
+            Field(x => x.Updated, nullable: true).Description("The update time of the Unit");
         }
     }
 }

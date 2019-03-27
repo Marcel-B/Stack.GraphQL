@@ -1,13 +1,11 @@
-﻿using com.b_velop.stack.Classes.Models;
-using com.b_velop.stack.GraphQl.Contexts;
+﻿using com.b_velop.stack.DataContext.Entities;
 using GraphQL.Types;
 
 namespace com.b_velop.stack.GraphQl.Types
 {
     public class LocationType : ObjectGraphType<Location>
     {
-        public LocationType(
-            MeasureContext measureContext)
+        public LocationType()
         {
             Name = "Location";
             Description = "A Location";
@@ -21,6 +19,7 @@ namespace com.b_velop.stack.GraphQl.Types
             Field(x => x.Longitude, nullable: true).Description("The longitude of the Location");
             Field(x => x.Latitude, nullable: true).Description("The latitude of the Unit.");
             Field(x => x.Created, nullable: true).Description("The creation date of the Unit.");
+            Field(x => x.Updated, nullable: true).Description("The time of the last update.");
         }
     }
 }

@@ -38,6 +38,8 @@ namespace com.b_velop.stack.GraphQl.Middlewares
             Counter.WithLabels(httpContext.Request.Path, httpContext.Request.Method).Inc();
             using (Gauge.WithLabels(httpContext.Request.Path, httpContext.Request.Method).NewTimer())
             {
+#if DEBUG
+#else
                 if (httpContext.Request.Method == "POST")
                 {
                     var token = httpContext.AuthenticateAsync("Bearer").Result;
@@ -48,6 +50,7 @@ namespace com.b_velop.stack.GraphQl.Middlewares
                         return httpContext.ForbidAsync();
                     }
                 }
+#endif
                 return _next(httpContext);
             }
         }

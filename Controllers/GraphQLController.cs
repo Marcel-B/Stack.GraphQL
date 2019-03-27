@@ -1,12 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GraphQL;
-using GraphQL.Types;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Authorization;
-using com.b_velop.GraphQl.Otds;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
 
 namespace com.b_velop.stack.GraphQl.Controllers
 {
