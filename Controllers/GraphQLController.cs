@@ -18,7 +18,5 @@ namespace com.b_velop.stack.GraphQl.Controllers
         [HttpGet]
         public IActionResult Get()
             => Ok();
-
-        []
     }
 }
