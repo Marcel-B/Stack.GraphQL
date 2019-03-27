@@ -34,7 +34,11 @@ namespace com.b_velop.stack.GraphQl.Middlewares
         public Task Invoke(
             HttpContext httpContext)
         {
-
+            if (httpContext.Request.Method == HttpMethods.Get && httpContext.Request.Path == "/test")
+            {
+                httpContext.Response.StatusCode = 200;
+                return Task.CompletedTask;
+            }
             Counter.WithLabels(httpContext.Request.Path, httpContext.Request.Method).Inc();
             using (Gauge.WithLabels(httpContext.Request.Path, httpContext.Request.Method).NewTimer())
             {
