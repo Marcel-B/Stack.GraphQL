@@ -6,4 +6,3 @@
 	Created datetimeoffset DEFAULT sysdatetimeoffset() NULL,
 	Updated datetimeoffset DEFAULT sysdatetimeoffset() NULL
 );
-
