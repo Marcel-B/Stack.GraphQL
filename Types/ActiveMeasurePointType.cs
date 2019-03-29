@@ -21,7 +21,7 @@ namespace com.b_velop.stack.GraphQl.Types
             Field(x => x.Created, nullable: true).Description("The time of creating the ActiveMeasurePoint.");
 
             FieldAsync<MeasurePointType, MeasurePoint>(
-                nameof(BatteryState.Point),
+                nameof(ActiveMeasurePoint.Point),
                 resolve: async context => await measurePointRepository.GetAsync(context.Source.Point));
         }
     }
