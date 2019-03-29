@@ -16,7 +16,8 @@ namespace com.b_velop.stack.GraphQl.Resolver
             IDataStore<ActiveMeasurePoint> activeMeasurePointRepository,
             IDataStore<Location> locationRepository,
             IDataStore<PriorityState> priorityStateRepository,
-            ITimeDataStore<MeasureValue> measureValueTimeRepository)
+            ITimeDataStore<MeasureValue> measureValueTimeRepository,
+            IDataStore<Link> linkRepository)
         {
             Name = "Query";
 
@@ -55,6 +56,11 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 "measurePoints",
                 "Request all measurePoints",
                 resolve: async context => await measurePointRepository.GetAllAsync());
+
+            FieldAsync<ListGraphType<LinkType>>(
+                "links",
+                "Request all links",
+                resolve: async context => await linkRepository.GetAllAsync());
             #endregion
 
             #region Get with filter
@@ -89,6 +95,17 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 resolve: async context => await measureValueTimeRepository.FilterPointValuesByTimeAsync(context.GetArgument<Guid>("id"), context.GetArgument<int>("timeSpan"))
             );
 
+            FieldAsync<ListGraphType<LinkType>>(
+                "link",
+                "Request a single link by Id",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>>
+                    {
+                        Name = "id",
+                        Description = "The unique identifier of the link"
+                    }),
+                resolve: async context => await linkRepository.GetAsync(context.GetArgument<Guid>("id"))
+            );
             #endregion
         }
     }

@@ -62,6 +62,7 @@ namespace com.b_velop.stack.GraphQl
                 .AddScoped<IDataStore<MeasurePoint>, MeasurePointRepository>()
                 .AddScoped<IDataStore<MeasureValue>, MeasureValueRepository>()
                 .AddScoped<IDataStore<PriorityState>, PriorityStateRepository>()
+                .AddScoped<IDataStore<Link>, LinkRepository>()
                 .AddScoped<IDataStore<Unit>, UnitRepository>()
                 .AddScoped<ITimeDataStore<MeasureValue>, MeasureValueRepository>()
                 .AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
