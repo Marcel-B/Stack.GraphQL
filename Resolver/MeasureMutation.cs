@@ -16,7 +16,8 @@ namespace com.b_velop.stack.GraphQl.Resolver
             IDataStore<PriorityState> priorityStateRepostiory,
             IDataStore<Location> locationRepository,
             IDataStore<Unit> unitRepository,
-            IDataStore<MeasureValue> measureValueRepository)
+            IDataStore<MeasureValue> measureValueRepository,
+            IDataStore<Link> linkRepository)
         {
             Name = "Mutation";
 
@@ -54,7 +55,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 "Update Unit by id",
                 new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" },
-                    new QueryArgument<UnitInputType> { Name = "unitType" }
+                    new QueryArgument<NonNullGraphType<UnitInputType>> { Name = "unitType" }
                     ),
                 resolve: async context =>
                 {
@@ -68,12 +69,27 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 "Update MeasurePoint by id.",
                 new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" },
-                    new QueryArgument<MeasurePointType> { Name = "measurePointType" }),
+                    new QueryArgument<NonNullGraphType<MeasurePointInputType>> { Name = "measurePointType" }),
                 async context =>
                 {
                     var id = context.GetArgument<Guid>("id");
                     var measurePoint = context.GetArgument<MeasurePoint>("measurePointType");
                     return await measurePointRepository.UpdateAsync(id, measurePoint);
+                });
+
+            FieldAsync<LinkType>(
+                "updateLink",
+                "Update an existing Link",
+                new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id"},
+                    new QueryArgument<NonNullGraphType<LinkInputType>> { Name = "linkType" }
+                    ),
+                resolve: async context =>
+                {
+                    var id = context.GetArgument<Guid>("id");
+                    var link = context.GetArgument<Link>("linkType");
+
+                    return await linkRepository.UpdateAsync(id, link);
                 });
             #endregion
 
@@ -136,6 +152,21 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     location.Created = DateTimeOffset.Now;
 
                     return await locationRepository.SaveAsync(location);
+                });
+
+            FieldAsync<LinkType>(
+                "createLink",
+                "Create a new Link",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<LinkInputType>> { Name = "linkType" }
+                    ),
+                resolve: async context =>
+                {
+                    var link = context.GetArgument<Link>("linkType");
+
+                    link.Id = Guid.NewGuid();
+
+                    return await linkRepository.SaveAsync(link);
                 });
             #endregion
         }
