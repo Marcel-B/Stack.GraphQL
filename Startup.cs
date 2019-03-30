@@ -42,6 +42,8 @@ namespace com.b_velop.stack.GraphQl
                 .AddScoped<MeasureSubscription>()
                 .AddScoped<UnitType>()
                 .AddScoped<UnitInputType>()
+                .AddScoped<LinkType>()
+                .AddScoped<LinkInputType>()
                 .AddScoped<LocationType>()
                 .AddScoped<LocationInputType>()
                 .AddScoped<MeasureValueType>()
