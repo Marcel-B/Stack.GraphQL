@@ -11,13 +11,24 @@ namespace com.b_velop.stack.GraphQl
     {
         public static void Main(string[] args)
         {
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            var stage = Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT");
+            var file = string.Empty;
+
+            if (stage == "Development")
+                file = "nlog-dev.config";
+            else
+                file = "nlog.config";
+
+            var logger = NLogBuilder.ConfigureNLog(file).GetCurrentClassLogger();
             try
             {
-                var metricServer = new MetricPusher(
-                    endpoint: "https://push.qaybe.de/metrics",
-                    job: "stack_graphql");
-                metricServer.Start();
+                if (stage == "Development")
+                {
+                    var metricServer = new MetricPusher(
+                        endpoint: "https://push.qaybe.de/metrics",
+                        job: "stack_graphql");
+                    metricServer.Start();
+                }
 
                 logger.Debug("init main");
                 CreateWebHostBuilder(args)
@@ -26,13 +37,11 @@ namespace com.b_velop.stack.GraphQl
             }
             catch (Exception ex)
             {
-                //NLog: catch setup errors
                 logger.Error(ex, "Stopped program because of exception");
                 throw;
             }
             finally
             {
-                // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
                 NLog.LogManager.Shutdown();
             }
         }

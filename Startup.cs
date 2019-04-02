@@ -23,14 +23,17 @@ namespace com.b_velop.stack.GraphQl
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
+        private readonly IHostingEnvironment _env;
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        public Startup(
+            IConfiguration configuration,
+            IHostingEnvironment env)
+        {
+            Configuration = configuration;
+            _env = env;
+        }
+
         public void ConfigureServices(
             IServiceCollection services)
         {
@@ -69,33 +72,41 @@ namespace com.b_velop.stack.GraphQl
                 .AddScoped<ITimeDataStore<MeasureValue>, MeasureValueRepository>()
                 .AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-#if DEBUG
-            var isWindows = System.Runtime.InteropServices.RuntimeInformation
-                .IsOSPlatform(OSPlatform.Windows);
-            if (isWindows)
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            var authority = string.Empty;
+            var apiName = string.Empty;
+            if (_env.IsDevelopment())
             {
-                services.AddDbContext<MeasureContext>(option =>
+                var isWindows = System.Runtime.InteropServices.RuntimeInformation
+                    .IsOSPlatform(OSPlatform.Windows);
+                if (isWindows)
                 {
-                    option.UseSqlServer(Configuration.GetConnectionString("win"));
-                });
+                    services.AddDbContext<MeasureContext>(option =>
+                    {
+                        option.UseSqlServer(Configuration.GetConnectionString("win"));
+                    });
+                }
+                else
+                {
+                    services.AddDbContext<MeasureContext>(option =>
+                    {
+                        option.UseSqlServer(Configuration.GetConnectionString("default"));
+                    });
+                }
+                authority = Configuration.GetSection("ApiSecrets-dev").GetSection("AuthorityUrl").Value;
+                apiName = Configuration.GetSection("ApiSecrets-dev").GetSection("ApiName").Value;
             }
             else
             {
                 services.AddDbContext<MeasureContext>(option =>
                 {
-                    option.UseSqlServer(Configuration.GetConnectionString("default"));
+                    option.UseSqlServer(Configuration.GetConnectionString("production"));
                 });
-            }
-#else
-            services.AddDbContext<MeasureContext>(option =>
-            {
-                option.UseSqlServer(Configuration.GetConnectionString("production"));
-            });
-#endif
-            var authority = Configuration.GetSection("ApiSecrets").GetSection("AuthorityUrl").Value;
-            var apiName = Configuration.GetSection("ApiSecrets").GetSection("ApiName").Value;
 
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+                authority = Configuration.GetSection("ApiSecrets").GetSection("AuthorityUrl").Value;
+                apiName = Configuration.GetSection("ApiSecrets").GetSection("ApiName").Value;
+
+            }
 
             services.AddAuthentication("Bearer")
                 .AddIdentityServerAuthentication(options =>
@@ -104,6 +115,7 @@ namespace com.b_velop.stack.GraphQl
                     options.RequireHttpsMetadata = true;
                     options.ApiName = apiName;
                 });
+
             services.AddGraphQL(_ =>
             {
                 _.EnableMetrics = true;
@@ -121,9 +133,11 @@ namespace com.b_velop.stack.GraphQl
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            else
+            {
+                app.UseMetricsCollector();
+            }
             app.UseAuthentication();
-            app.UseMetricsCollector();
             app.UseGraphQL<ISchema>("/graphql");
         }
     }
