@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.InteropServices;
 using com.b_velop.stack.DataContext.Abstract;
 using com.b_velop.stack.DataContext.Entities;
 using com.b_velop.stack.DataContext.Repository;
@@ -9,12 +8,19 @@ using com.b_velop.stack.GraphQl.Resolver;
 using com.b_velop.stack.GraphQl.Schemas;
 using com.b_velop.stack.GraphQl.Types;
 using GraphQL;
+using GraphQL.DataLoader;
 using GraphQL.Http;
 using GraphQL.Server;
+using GraphQL.Server.Ui.Playground;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Internal;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +31,7 @@ namespace com.b_velop.stack.GraphQl
     {
         private readonly IHostingEnvironment _env;
         public IConfiguration Configuration { get; }
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         public Startup(
             IConfiguration configuration,
@@ -38,8 +45,10 @@ namespace com.b_velop.stack.GraphQl
             IServiceCollection services)
         {
             services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService))
-                .AddScoped<IDocumentExecuter, DocumentExecuter>()
-                .AddScoped<IDocumentWriter, DocumentWriter>()
+            .AddSingleton<DataLoaderDocumentListener>()
+               .AddSingleton<IDocumentExecuter, DocumentExecuter>()
+               .AddSingleton<IDocumentWriter, DocumentWriter>()
+                .AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>()
                 .AddScoped<MeasureQuery>()
                 .AddScoped<MeasureMutation>()
                 .AddScoped<MeasureSubscription>()
@@ -73,55 +82,72 @@ namespace com.b_velop.stack.GraphQl
                 .AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-            var authority = string.Empty;
-            var apiName = string.Empty;
+            var conString = string.Empty;
+            var secretString = string.Empty;
+            services.AddScoped<IUrlHelper, UrlHelper>(f =>
+            {
+                var actionContext = f.GetService<IActionContextAccessor>().ActionContext;
+                return new UrlHelper(actionContext);
+            });
             if (_env.IsDevelopment())
             {
-                var isWindows = System.Runtime.InteropServices.RuntimeInformation
-                    .IsOSPlatform(OSPlatform.Windows);
-                if (isWindows)
-                {
-                    services.AddDbContext<MeasureContext>(option =>
-                    {
-                        option.UseSqlServer(Configuration.GetConnectionString("win"));
-                    });
-                }
-                else
-                {
-                    services.AddDbContext<MeasureContext>(option =>
-                    {
-                        option.UseSqlServer(Configuration.GetConnectionString("default"));
-                    });
-                }
-                authority = Configuration.GetSection("ApiSecrets-dev").GetSection("AuthorityUrl").Value;
-                apiName = Configuration.GetSection("ApiSecrets-dev").GetSection("ApiName").Value;
+                //conString = RuntimeInformation
+                //.IsOSPlatform(OSPlatform.Windows) ? "win" : "default";
+                conString = "default";
+                secretString = "ApiSecrets-dev";
             }
             else
             {
-                services.AddDbContext<MeasureContext>(option =>
-                {
-                    option.UseSqlServer(Configuration.GetConnectionString("production"));
-                });
-
-                authority = Configuration.GetSection("ApiSecrets").GetSection("AuthorityUrl").Value;
-                apiName = Configuration.GetSection("ApiSecrets").GetSection("ApiName").Value;
-
+                secretString = "ApiSecrets";
+                conString = "production";
             }
 
-            services.AddAuthentication("Bearer")
-                .AddIdentityServerAuthentication(options =>
-                {
-                    options.Authority = authority;
-                    options.RequireHttpsMetadata = true;
-                    options.ApiName = apiName;
-                });
+            services.AddDbContext<MeasureContext>(option =>
+            {
+                option.UseSqlServer(Configuration.GetConnectionString(conString));
+            });
+
+            var authority = Configuration.GetSection(secretString).GetSection("AuthorityUrl").Value;
+            var apiName = Configuration.GetSection(secretString).GetSection("ApiName").Value;
+
+            if (!_env.IsDevelopment())
+                services.AddAuthentication("Bearer")
+                    .AddIdentityServerAuthentication(options =>
+                    {
+                        options.Authority = authority;
+                        if (_env.IsDevelopment())
+                            options.RequireHttpsMetadata = false;
+                        else
+                            options.RequireHttpsMetadata = true;
+                        options.ApiName = apiName;
+                    });
 
             services.AddGraphQL(_ =>
             {
                 _.EnableMetrics = true;
                 _.ExposeExceptions = true;
             }); // Add required services for DataLoader support;
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder
+                    .AllowAnyOrigin()
+                    //.WithOrigins(
+                    //    "http://localhost:8090",
+                    //    "http://localhost:8090/",
+                    //    "http://localhost/",
+                    //    "http://localhost"
+                    //    )
+                                .AllowCredentials()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                });
+            });
+            services.AddSignalR();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -130,15 +156,23 @@ namespace com.b_velop.stack.GraphQl
             IHostingEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
-            {
                 app.UseMetricsCollector();
-            }
-            app.UseAuthentication();
-            app.UseGraphQL<ISchema>("/graphql");
+
+            if (!env.IsDevelopment())
+                app.UseAuthentication();
+
+
+            //app.UseGraphQL<ISchema>("/graphql");
+            app.UseMiddleware<GraphQLMiddleware>(new GraphQLSettings { });
+            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions { GraphQLEndPoint = "/graphql", Path = "/playground" });
+            app.UseCors(MyAllowSpecificOrigins);
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<TetsHub>("/chat");
+            });
+            app.UseMvc();
         }
     }
 }

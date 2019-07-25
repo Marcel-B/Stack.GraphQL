@@ -106,6 +106,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     }),
                 resolve: async context => await linkRepository.GetAsync(context.GetArgument<Guid>("id"))
             );
+
             #endregion
         }
     }

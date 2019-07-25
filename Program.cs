@@ -22,12 +22,12 @@ namespace com.b_velop.stack.GraphQl
             var logger = NLogBuilder.ConfigureNLog(file).GetCurrentClassLogger();
             try
             {
-                if (stage == "Development")
+                if (stage != "Development")
                 {
-                    var metricServer = new MetricPusher(
-                        endpoint: "https://push.qaybe.de/metrics",
-                        job: "stack_graphql");
-                    metricServer.Start();
+                    //var metricServer = new MetricPusher(
+                    //    endpoint: "https://push.qaybe.de/metrics",
+                    //    job: "stack_graphql");
+                    //metricServer.Start();
                 }
 
                 logger.Debug("init main");

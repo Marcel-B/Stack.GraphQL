@@ -20,7 +20,7 @@
     "GraphQl": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "playground",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
