@@ -71,7 +71,7 @@ namespace com.b_velop.stack.GraphQl
                 .AddScoped<TimeTypeInterface>()
                 .AddScoped<ISchema, MeasureSchema>()
                 .AddScoped<IDataStore<ActiveMeasurePoint>, ActiveMeasurePointRepository>()
-                .AddScoped<IDataStore<BatteryState>, BatteryStateRepository>()
+                .AddScoped<BatteryStateRepository>()
                 .AddScoped<IDataStore<Location>, LocationRepository>()
                 .AddScoped<IDataStore<MeasurePoint>, MeasurePointRepository>()
                 .AddScoped<IDataStore<MeasureValue>, MeasureValueRepository>()
