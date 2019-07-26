@@ -14,10 +14,8 @@ using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -134,16 +132,13 @@ namespace com.b_velop.stack.GraphQl
                 builder =>
                 {
                     builder
-                    .AllowAnyOrigin()
-                    //.WithOrigins(
-                    //    "http://localhost:8090",
-                    //    "http://localhost:8090/",
-                    //    "http://localhost/",
-                    //    "http://localhost"
-                    //    )
-                                .AllowCredentials()
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
+                    //.AllowAnyOrigin()
+                        .WithOrigins(
+                            "http://localhost",
+                            "https://nuqneh.de")
+                        .AllowCredentials()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                 });
             });
             services.AddSignalR();
