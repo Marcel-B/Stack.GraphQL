@@ -12,7 +12,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
             IDataStore<Unit> unitRepository,
             IDataStore<MeasurePoint> measurePointRepository,
             IDataStore<MeasureValue> measureValueRepository,
-            IDataStore<BatteryState> batteryStateRepository,
+            BatteryStateRepository batteryStateRepository,
             IDataStore<ActiveMeasurePoint> activeMeasurePointRepository,
             IDataStore<Location> locationRepository,
             IDataStore<PriorityState> priorityStateRepository,
