@@ -12,7 +12,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
     public class MeasureMutation : ObjectGraphType
     {
         public MeasureMutation(
-            IDataStore<BatteryState> batteryStateRepository,
+            BatteryStateRepository batteryStateRepository,
             IDataStore<ActiveMeasurePoint> activeMeasurePointRepository,
             IDataStore<MeasurePoint> measurePointRepository,
             IDataStore<PriorityState> priorityStateRepostiory,
@@ -42,19 +42,15 @@ namespace com.b_velop.stack.GraphQl.Resolver
             "updateBatteryStateBunch",
             arguments: new QueryArguments(
                 new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "ids" },
-                new QueryArgument<NonNullGraphType<ListGraphType<BatteryStateInputType>>> { Name = "batteryStateTypes" }),
+                new QueryArgument<NonNullGraphType<ListGraphType<DateTimeOffsetGraphType>>> { Name = "timestamps" },
+                new QueryArgument<NonNullGraphType<ListGraphType<BooleanGraphType>>> { Name = "states" }),
             resolve: async context =>
             {
                 var time = DateTimeOffset.Now;
                 var ids = context.GetArgument<IEnumerable<Guid>>("ids");
-                var batteryStates = context.GetArgument<IEnumerable<BatteryState>>("batteryStateTypes");
-
-                var updatedStates = new List<BatteryState>();
-                foreach (var batteryState in batteryStates)
-                {
-                    var state = await batteryStateRepository.UpdateAsync(ids.ElementAt(updatedStates.Count), batteryState);
-                    updatedStates.Add(state);
-                }
+                var timestamps = context.GetArgument<IEnumerable<DateTimeOffset>>("timestamps");
+                var batteryStates = context.GetArgument<IEnumerable<bool>>("states");
+                var updatedStates = await batteryStateRepository.UpdateStatesAsync(ids, timestamps, batteryStates);
                 return updatedStates;
             });
 

@@ -6,7 +6,7 @@
     <RootNamespace>com.b_velop.stack.GraphQl</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="DataContext" Version="0.0.14" />
+    <PackageReference Include="DataContext" Version="0.0.15" />
     <PackageReference Include="Microsoft.AspNetCore.App">
       <PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
       <Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
