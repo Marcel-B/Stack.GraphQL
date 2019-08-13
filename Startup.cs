@@ -106,7 +106,8 @@ namespace com.b_velop.stack.GraphQl
             });
 
             var authority = Configuration.GetSection(secretString).GetSection("AuthorityUrl").Value;
-            var apiName = Configuration.GetSection(secretString).GetSection("ApiName").Value;
+            var apiResource = Configuration.GetSection(secretString).GetSection("ApiResource").Value;
+            var apiScope = Configuration.GetSection(secretString).GetSection("ApiScope").Value;
 
             if (!_env.IsDevelopment())
                 services.AddAuthentication("Bearer")
@@ -117,7 +118,7 @@ namespace com.b_velop.stack.GraphQl
                             options.RequireHttpsMetadata = false;
                         else
                             options.RequireHttpsMetadata = true;
-                        options.ApiName = apiName;
+                        options.ApiName = apiResource;
                     });
 
             services.AddGraphQL(_ =>
