@@ -107,6 +107,18 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 resolve: async context => await linkRepository.GetAsync(context.GetArgument<Guid>("id"))
             );
 
+            FieldAsync<MeasurePointType>(
+                "measurePoint",
+                "Request a MeasurePoint by ID",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>>{ Name = "id", Description = "The unique identifier of the unit" }),
+                resolve: async context =>
+                {
+                    var id = context.GetArgument<Guid>("id");
+                    var measurePoint = await measurePointRepository.GetAsync(id);
+                    return measurePoint;
+                });
+
             #endregion
         }
     }
