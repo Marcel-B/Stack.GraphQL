@@ -7,7 +7,7 @@ WORKDIR /src
 
 
 # Copy csproj and restore as distinct layers
-COPY ./Stack.GrahpQL/Stack.GraphQL.csproj GraphQL/
+COPY Stack.GraphQL/Stack.GraphQL.csproj GraphQL/
 
 COPY NuGet.config GraphQL/
 
