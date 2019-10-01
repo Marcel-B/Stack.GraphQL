@@ -1,20 +1,29 @@
-﻿FROM microsoft/dotnet:sdk AS build-env
-WORKDIR /app
+﻿FROM mcr.microsoft.com/dotnet/core/runtime:3.0 AS base
 
 EXPOSE 3000
 
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS buildFROM microsoft/dotnet:sdk AS build-env
+WORKDIR /src
+
+
 # Copy csproj and restore as distinct layers
-COPY *.csproj ./
-COPY NuGet.config ./
-RUN dotnet restore --configfile NuGet.config
+COPY ./Stack.GrahpQL/*.csproj GraphQL/
+
+COPY NuGet.config GraphQL/
+
+RUN dotnet restore GraphQL/Stack.GraphQL.csproj --configfile ./GraphQL/NuGet.config
 
 # Copy everything else and build
-COPY . .
-RUN dotnet publish -c Release -o out
+COPY ./Stack.GraphQL/ GraphQL/
 
-# Build runtime image
-FROM microsoft/dotnet:aspnetcore-runtime
+WORKDIR "/src/GraphQL"
+RUN dotnet build "Stack.GraphQL.csproj" -c Release -o /app
+
+FROM build AS publish
+RUN dotnet publish "Stack.GraphQL.csproj" -c Release -o /app
+
+FROM base AS final
+
 WORKDIR /app
-COPY --from=build-env /app/out .
-
-ENTRYPOINT ["dotnet", "DataLayer.dll"]
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "Stack.GraphQL.dll"]
