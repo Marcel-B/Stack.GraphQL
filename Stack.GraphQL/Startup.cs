@@ -14,26 +14,27 @@ using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace com.b_velop.stack.GraphQl
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _env;
+        private readonly IHostEnvironment _env;
         public IConfiguration Configuration { get; }
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         public Startup(
             IConfiguration configuration,
-            IHostingEnvironment env)
+            IHostEnvironment env)
         {
             Configuration = configuration;
             _env = env;
@@ -80,34 +81,22 @@ namespace com.b_velop.stack.GraphQl
                 .AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-            var conString = string.Empty;
-            var secretString = string.Empty;
+
             services.AddScoped<IUrlHelper, UrlHelper>(f =>
             {
                 var actionContext = f.GetService<IActionContextAccessor>().ActionContext;
                 return new UrlHelper(actionContext);
             });
-            if (_env.IsDevelopment())
-            {
-                //conString = RuntimeInformation
-                //.IsOSPlatform(OSPlatform.Windows) ? "win" : "default";
-                conString = "default";
-                secretString = "ApiSecrets-dev";
-            }
-            else
-            {
-                secretString = "ApiSecrets";
-                conString = "production";
-            }
+
+            var authority = System.Environment.GetEnvironmentVariable("AuthorityUrl");
+            var apiResource = System.Environment.GetEnvironmentVariable("ApiResource");
+            var apiScope = System.Environment.GetEnvironmentVariable("ApiScope");
+            var conString = System.Environment.GetEnvironmentVariable("ConString");
 
             services.AddDbContext<MeasureContext>(option =>
             {
-                option.UseSqlServer(Configuration.GetConnectionString(conString));
+                option.UseSqlServer(conString);
             });
-
-            var authority = Configuration.GetSection(secretString).GetSection("AuthorityUrl").Value;
-            var apiResource = Configuration.GetSection(secretString).GetSection("ApiResource").Value;
-            var apiScope = Configuration.GetSection(secretString).GetSection("ApiScope").Value;
 
             if (!_env.IsDevelopment())
                 services.AddAuthentication("Bearer")
@@ -125,7 +114,7 @@ namespace com.b_velop.stack.GraphQl
             {
                 _.EnableMetrics = true;
                 _.ExposeExceptions = true;
-            }); // Add required services for DataLoader support;
+            });
 
             services.AddCors(options =>
             {
@@ -143,18 +132,16 @@ namespace com.b_velop.stack.GraphQl
                 });
             });
             services.AddSignalR();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
             IApplicationBuilder app,
-            IHostingEnvironment env)
+            IHostEnvironment env)
         {
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
-            else
-                app.UseMetricsCollector();
 
             if (!env.IsDevelopment())
                 app.UseAuthentication();
@@ -164,11 +151,11 @@ namespace com.b_velop.stack.GraphQl
             app.UseMiddleware<GraphQLMiddleware>(new GraphQLSettings { });
             app.UseGraphQLPlayground(new GraphQLPlaygroundOptions { GraphQLEndPoint = "/graphql", Path = "/playground" });
             app.UseCors(MyAllowSpecificOrigins);
-            app.UseSignalR(routes =>
+            app.UseEndpoints(options =>
             {
-                routes.MapHub<TetsHub>("/chat");
+                options.MapHub<TetsHub>("/chat");
             });
-            app.UseMvc();
+            app.UseRouting();
         }
     }
 }

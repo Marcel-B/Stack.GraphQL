@@ -54,9 +54,9 @@ node {
         if(env.BRANCH_NAME == 'master'){
             stage('containerize'){
                 mvnHome = env.BUILD_NUMBER
-                sh "docker build -t docker.qaybe.de/stack.datalayer:0.0.${mvnHome} ."
+                sh "docker build -t docker.qaybe.de/stack.graphql:1.0.${mvnHome} ."
                 withDockerRegistry(credentialsId: 'DockerRegistry', toolName: 'QaybeDocker', url: 'https://docker.qaybe.de') {
-                    sh "docker push docker.qaybe.de/stack.datalayer:0.0.${mvnHome}"   
+                    sh "docker push docker.qaybe.de/stack.graphql:1.0.${mvnHome}"   
                 }
             }
         }
