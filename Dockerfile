@@ -1,8 +1,8 @@
-﻿FROM mcr.microsoft.com/dotnet/core/runtime:3.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
 
 EXPOSE 3000
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 
 
