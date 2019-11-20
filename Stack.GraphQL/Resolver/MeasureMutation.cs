@@ -12,6 +12,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
     public class MeasureMutation : ObjectGraphType
     {
         public MeasureMutation(
+            IRepositoryWrapper rep,
             BatteryStateRepository batteryStateRepository,
             IDataStore<ActiveMeasurePoint> activeMeasurePointRepository,
             IDataStore<MeasurePoint> measurePointRepository,
@@ -145,7 +146,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     measurePoint.Id = Guid.NewGuid();
                     measurePoint.Created = DateTimeOffset.Now;
 
-                    return await measurePointRepository.SaveAsync(measurePoint);
+                    return await rep.MeasurePoint.InsertAsync(measurePoint);
                 });
 
             FieldAsync<MeasureValueType>(

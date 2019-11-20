@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using com.b_velop.stack.DataContext;
 using com.b_velop.stack.DataContext.Abstract;
 using com.b_velop.stack.DataContext.Entities;
 using com.b_velop.stack.DataContext.Repository;
@@ -72,7 +73,6 @@ namespace com.b_velop.stack.GraphQl
                 .AddScoped<IDataStore<ActiveMeasurePoint>, ActiveMeasurePointRepository>()
                 .AddScoped<BatteryStateRepository>()
                 .AddScoped<IDataStore<Location>, LocationRepository>()
-                .AddScoped<IDataStore<MeasurePoint>, MeasurePointRepository>()
                 .AddScoped<IDataStore<MeasureValue>, MeasureValueRepository>()
                 .AddScoped<IDataStore<PriorityState>, PriorityStateRepository>()
                 .AddScoped<IDataStore<Link>, LinkRepository>()
@@ -80,6 +80,7 @@ namespace com.b_velop.stack.GraphQl
                 .AddScoped<ITimeDataStore<MeasureValue>, MeasureValueRepository>()
                 .AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            services.UseStackDataContext();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddScoped<IUrlHelper, UrlHelper>(f =>
