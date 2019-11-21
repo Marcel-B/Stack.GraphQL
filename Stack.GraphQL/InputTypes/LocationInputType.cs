@@ -13,8 +13,6 @@ namespace com.b_velop.stack.GraphQl.InputTypes
             Field(x => x.Floor, nullable: true);
             Field(x => x.Longitude, nullable: true);
             Field(x => x.Latitude, nullable: true);
-            Field(x => x.Created, nullable: true);
-            Field(x => x.Updated, nullable: true);
         }
     }
 }

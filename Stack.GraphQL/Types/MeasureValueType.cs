@@ -7,7 +7,7 @@ namespace com.b_velop.stack.GraphQl.Types
     public class MeasureValueType : ObjectGraphType<MeasureValue>
     {
         public MeasureValueType(
-            IDataStore<MeasurePoint> measurePointRepository)
+            IRepositoryWrapper rep)
         {
             Name = "MeasureValue";
             Description = "A measured value.";
@@ -19,7 +19,7 @@ namespace com.b_velop.stack.GraphQl.Types
 
             FieldAsync<MeasurePointType, MeasurePoint>(
                 nameof(MeasureValue.Point),
-                resolve: async context => await measurePointRepository.GetAsync(context.Source.Point));
+                resolve: async context => await rep.MeasurePoint.SelectByIdAsync(context.Source.Point));
 
             Interface<TimeTypeInterface>();
         }

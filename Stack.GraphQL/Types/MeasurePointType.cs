@@ -7,8 +7,7 @@ namespace com.b_velop.stack.GraphQl.Types
     public class MeasurePointType : ObjectGraphType<MeasurePoint>
     {
         public MeasurePointType(
-            IDataStore<Unit> unitRepository,
-            IDataStore<Location> locationRepository)
+            IRepositoryWrapper rep)
         {
             Name = "MeasurePoint";
             Description = "A point that produces measure values.";
@@ -24,12 +23,12 @@ namespace com.b_velop.stack.GraphQl.Types
             FieldAsync<UnitType, Unit>(
                 nameof(MeasurePoint.Unit),
                 "The Unit of the measure point",
-                resolve: async context => await unitRepository.GetAsync(context.Source.Unit));
+                resolve: async context => await rep.Unit.SelectByIdAsync(context.Source.Unit));
 
             FieldAsync<LocationType, Location>(
                 nameof(MeasurePoint.Location),
                 "The location of the measure point",
-                resolve: async context => await locationRepository.GetAsync(context.Source.Location));
+                resolve: async context => await rep.Location.SelectByIdAsync(context.Source.Location));
         }
     }
 }

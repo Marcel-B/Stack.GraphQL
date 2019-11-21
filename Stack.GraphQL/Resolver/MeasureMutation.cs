@@ -12,82 +12,89 @@ namespace com.b_velop.stack.GraphQl.Resolver
     public class MeasureMutation : ObjectGraphType
     {
         public MeasureMutation(
-            IRepositoryWrapper rep,
-            BatteryStateRepository batteryStateRepository,
-            IDataStore<ActiveMeasurePoint> activeMeasurePointRepository,
-            IDataStore<MeasurePoint> measurePointRepository,
-            IDataStore<PriorityState> priorityStateRepostiory,
-            IDataStore<Location> locationRepository,
-            IDataStore<Unit> unitRepository,
-            IDataStore<MeasureValue> measureValueRepository,
-            IDataStore<Link> linkRepository)
+            IRepositoryWrapper rep)
         {
             Name = "Mutation";
 
             #region Update
-            FieldAsync<BatteryStateType>(
+            Field<BatteryStateType>(
                 "updateBatteryState",
                 "Update the state of the battery.",
                 new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id", Description = "The unique identifier of the battery." },
                     new QueryArgument<NonNullGraphType<BatteryStateInputType>> { Name = "batteryStateType" }
                     ),
-                    async context =>
+                    context =>
                     {
                         var id = context.GetArgument<Guid>("id");
                         var state = context.GetArgument<BatteryState>("batteryStateType");
-                        return await batteryStateRepository.UpdateAsync(id, state);
+                        state.Id = id;
+                        return rep.BatteryState.Update(state);
                     });
 
-            FieldAsync<ListGraphType<BatteryStateType>>(
+            Field<ListGraphType<BatteryStateType>>(
             "updateBatteryStateBunch",
             arguments: new QueryArguments(
                 new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "ids" },
                 new QueryArgument<NonNullGraphType<ListGraphType<DateTimeOffsetGraphType>>> { Name = "timestamps" },
                 new QueryArgument<NonNullGraphType<ListGraphType<BooleanGraphType>>> { Name = "states" }),
-            resolve: async context =>
+            resolve: context =>
             {
                 var time = DateTimeOffset.Now;
-                var ids = context.GetArgument<IEnumerable<Guid>>("ids");
-                var timestamps = context.GetArgument<IEnumerable<DateTimeOffset>>("timestamps");
-                var batteryStates = context.GetArgument<IEnumerable<bool>>("states");
-                var updatedStates = await batteryStateRepository.UpdateStatesAsync(ids, timestamps, batteryStates);
+                var ids = context.GetArgument<IList<Guid>>("ids");
+                var timestamps = context.GetArgument<IList<DateTimeOffset>>("timestamps");
+                var batteryStates = context.GetArgument<IList<bool>>("states");
+                var newBatteryStates = new List<BatteryState>();
+                foreach (var id in ids)
+                {
+                    newBatteryStates.Add(new BatteryState
+                    {
+                        Id = id,
+                        State = batteryStates[newBatteryStates.Count],
+                        Timestamp = timestamps[newBatteryStates.Count]
+                    });
+                }
+                var updatedStates = rep.BatteryState.UpdateBunch(newBatteryStates);
                 return updatedStates;
             });
 
 
-            FieldAsync<PriorityStateType>(
+            Field<PriorityStateType>(
                 "updatePriorityState",
                 "Update the value of the Priority.",
                 new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id", Description = "The unique identifier of the battery." },
                     new QueryArgument<NonNullGraphType<PriorityStateInputType>> { Name = "priorityStateType" }
                     ),
-                    async context =>
+                    context =>
                     {
                         var id = context.GetArgument<Guid>("id");
                         var state = context.GetArgument<PriorityState>("priorityStateType");
-                        return await priorityStateRepostiory.UpdateAsync(id, state);
+                        return rep.PriorityState.Update(state);
                     });
 
-            FieldAsync<ListGraphType<PriorityStateType>>(
+            Field<ListGraphType<PriorityStateType>>(
                 "updatePriorityStateBunch",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<ListGraphType<IdGraphType>>> { Name = "ids" },
                     new QueryArgument<NonNullGraphType<ListGraphType<PriorityStateInputType>>> { Name = "priorityStateTypes" }),
-                resolve: async context =>
+                resolve: context =>
                 {
                     var time = DateTimeOffset.Now;
-                    var ids = context.GetArgument<IEnumerable<Guid>>("ids");
-                    var priorityStates = context.GetArgument<IEnumerable<PriorityState>>("priorityStateTypes");
-
+                    var ids = context.GetArgument<IList<Guid>>("ids");
+                    var priorityStates = context.GetArgument<IList<PriorityState>>("priorityStateTypes");
                     var updatedStates = new List<PriorityState>();
-                    foreach (var priorityState in priorityStates)
+                    foreach (var id in ids)
                     {
-                        var state = await priorityStateRepostiory.UpdateAsync(ids.ElementAt(updatedStates.Count), priorityState);
-                        updatedStates.Add(state);
+                        updatedStates.Add(new PriorityState
+                        {
+                            Id = id,
+                            State = priorityStates[updatedStates.Count].State,
+                            Timestamp = priorityStates[updatedStates.Count].Timestamp
+                        });
                     }
-                    return updatedStates;
+                    var result = rep.PriorityState.UpdateBunch(updatedStates);
+                    return result;
                 });
 
             FieldAsync<UnitType>(
@@ -101,7 +108,12 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 {
                     var id = context.GetArgument<Guid>("id");
                     var unit = context.GetArgument<Unit>("unitType");
-                    return await unitRepository.UpdateAsync(id, unit);
+                    var old = await rep.Unit.SelectByIdAsync(id);
+
+                    old.Name = unit.Name;
+                    old.Display = unit.Display;
+
+                    return rep.Unit.Update(old);
                 });
 
             FieldAsync<MeasurePointType>(
@@ -114,7 +126,17 @@ namespace com.b_velop.stack.GraphQl.Resolver
                 {
                     var id = context.GetArgument<Guid>("id");
                     var measurePoint = context.GetArgument<MeasurePoint>("measurePointType");
-                    return await measurePointRepository.UpdateAsync(id, measurePoint);
+
+                    var old = await rep.MeasurePoint.SelectByIdAsync(id);
+
+                    old.Display = measurePoint.Display;
+                    old.Unit = measurePoint.Unit;
+                    old.Location = measurePoint.Location;
+                    old.Min = measurePoint.Min;
+                    old.Max = measurePoint.Max;
+                    old.ExternId = measurePoint.ExternId ?? old.ExternId;
+
+                    return rep.MeasurePoint.Update(old);
                 });
 
             FieldAsync<LinkType>(
@@ -129,7 +151,11 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     var id = context.GetArgument<Guid>("id");
                     var link = context.GetArgument<Link>("linkType");
 
-                    return await linkRepository.UpdateAsync(id, link);
+                    var old = await rep.Link.SelectByIdAsync(id);
+                    old.Name = link.Name;
+                    old.LinkValue = link.LinkValue;
+
+                    return rep.Link.Update(old);
                 });
             #endregion
 
@@ -161,7 +187,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     measureValue.Id = Guid.NewGuid();
                     measureValue.Timestamp = DateTimeOffset.Now;
 
-                    return await measureValueRepository.SaveAsync(measureValue);
+                    return await rep.MeasureValue.InsertAsync(measureValue);
                 });
 
             FieldAsync<MeasureValueType>(
@@ -181,7 +207,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     Point = pointId,
                     Value = value
                 };
-                return await measureValueRepository.SaveAsync(measureValue);
+                return await rep.MeasureValue.InsertAsync(measureValue);
             });
 
             FieldAsync<ListGraphType<MeasureValueType>>(
@@ -207,7 +233,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
                             Value = value
                         });
                     }
-                    _ = await measureValueRepository.SaveBulkAsync(measureValues.ToArray());
+                    _ = await rep.MeasureValue.InsertBunchAsync(measureValues);
                     return measureValues;
                 });
 
@@ -225,7 +251,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     unit.Id = Guid.NewGuid();
                     unit.Created = DateTimeOffset.Now;
 
-                    return await unitRepository.SaveAsync(unit);
+                    return await rep.Unit.InsertAsync(unit);
                 });
 
             FieldAsync<LocationType>(
@@ -240,7 +266,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
                     location.Id = Guid.NewGuid();
                     location.Created = DateTimeOffset.Now;
 
-                    return await locationRepository.SaveAsync(location);
+                    return await rep.Location.InsertAsync(location);
                 });
 
             FieldAsync<LinkType>(
@@ -255,7 +281,7 @@ namespace com.b_velop.stack.GraphQl.Resolver
 
                     link.Id = Guid.NewGuid();
 
-                    return await linkRepository.SaveAsync(link);
+                    return await rep.Link.InsertAsync(link);
                 });
             #endregion
         }

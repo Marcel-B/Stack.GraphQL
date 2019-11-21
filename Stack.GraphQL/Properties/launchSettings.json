@@ -13,9 +13,10 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
+        "ConString": "Server=localhost,1433;Database=Measure;User Id=sa;Password=foo123bar!",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+      "applicationUrl": "http://localhost:3000/playground"
     },
     "IIS Express": {
       "commandName": "IISExpress",

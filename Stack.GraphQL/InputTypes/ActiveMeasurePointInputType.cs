@@ -12,8 +12,6 @@ namespace com.b_velop.stack.GraphQl.InputTypes
 
             Field(x => x.IsActive);
             Field(x => x.LastValue);
-            Field(x => x.Updated, nullable: true);
-            Field(x => x.Created, nullable: true);
             Field(x => x.Point, type: typeof(NonNullGraphType<IdGraphType>));
         }
     }

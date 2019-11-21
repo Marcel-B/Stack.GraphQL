@@ -7,7 +7,7 @@ namespace com.b_velop.stack.GraphQl.Types
     public class PriorityStateType : ObjectGraphType<PriorityState>
     {
         public PriorityStateType(
-            IDataStore<MeasurePoint> measurePointRepository)
+            IRepositoryWrapper rep)
         {
             Name = "PriorityState";
             Description = "State of Priority values.";
@@ -20,7 +20,7 @@ namespace com.b_velop.stack.GraphQl.Types
 
             FieldAsync<MeasurePointType, MeasurePoint>(
                 nameof(PriorityState.Point),
-                resolve: async context => await measurePointRepository.GetAsync(context.Source.Point));
+                resolve: async context => await rep.MeasurePoint.SelectByIdAsync(context.Source.Point));
 
             Interface<TimeTypeInterface>();
         }
