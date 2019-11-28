@@ -10,8 +10,6 @@ namespace com.b_velop.stack.GraphQl.InputTypes
             Name = "LinkInput";
             Field(x => x.Name);
             Field(x => x.LinkValue);
-            Field(x => x.Created, nullable: true);
-            Field(x => x.LastEdit, nullable: true);
         }
     }
 }

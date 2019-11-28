@@ -11,7 +11,6 @@ namespace com.b_velop.stack.GraphQl.InputTypes
             Field(x => x.Timestamp);
             Field(x => x.Point, type: typeof(NonNullGraphType<IdGraphType>));
             Field(x => x.Value);
-            Field(x => x.Updated, nullable: true);
         }
     }
 }

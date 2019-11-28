@@ -9,8 +9,6 @@ namespace com.b_velop.stack.GraphQl.InputTypes
         {
             Name = "BatteryStateInput";
             Field(x => x.Timestamp);
-            Field(x => x.Created, nullable: true);
-            Field(x => x.Updated, nullable: true);
             Field(x => x.Point, type: typeof(NonNullGraphType<IdGraphType>));
             Field(x => x.State);
         }

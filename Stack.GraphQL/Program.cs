@@ -1,8 +1,13 @@
-﻿using System;
-using Microsoft.AspNetCore;
+﻿
+using System;
+using com.b_velop.stack.DataContext.Abstract;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
+using Prometheus;
 
 namespace com.b_velop.stack.GraphQl
 {
@@ -11,8 +16,7 @@ namespace com.b_velop.stack.GraphQl
         public static void Main(string[] args)
         {
             var stage = Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT");
-            var file = string.Empty;
-
+            string file;
             if (stage == "Development")
                 file = "nlog-dev.config";
             else
@@ -23,14 +27,14 @@ namespace com.b_velop.stack.GraphQl
             {
                 if (stage != "Development")
                 {
-                    //var metricServer = new MetricPusher(
-                    //    endpoint: "https://push.qaybe.de/metrics",
-                    //    job: "stack_graphql");
-                    //metricServer.Start();
+                    var metricServer = new MetricPusher(
+                        endpoint: "https://push.qaybe.de/metrics",
+                        job: "stack_graphql");
+                    metricServer.Start();
                 }
 
                 logger.Debug("init main");
-                CreateWebHostBuilder(args)
+                CreateHostBuilder(args)
                     .Build()
                     .Run();
             }
@@ -44,15 +48,31 @@ namespace com.b_velop.stack.GraphQl
                 NLog.LogManager.Shutdown();
             }
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://*:3000")
-                .UseStartup<Startup>()
+        
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                  .ConfigureWebHostDefaults(webBuilder =>
+                  {
+                      webBuilder.UseUrls("http://*:3000");
+                      webBuilder.UseStartup<Startup>();
+                  })
+                .ConfigureServices(services =>
+                {
+                    var conString = Environment.GetEnvironmentVariable("ConString");
+#if DEBUG
+                    conString = "Server=localhost,1433;Database=Measure;User Id=sa;Password=foo123bar!";
+#endif
+                    services.AddDbContext<MeasureContext>(options =>
+                    {
+                        options.EnableDetailedErrors(true);
+                        options.EnableSensitiveDataLogging(true);
+                        options.UseSqlServer(conString, b => b.MigrationsAssembly("Stack.GraphQL"));
+                    });
+                })
                 .ConfigureLogging((hostingContext, logging) =>
                 {
                     logging.ClearProviders();
-                    logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                    logging.SetMinimumLevel(LogLevel.Trace);
                 })
                 .UseNLog();
     }

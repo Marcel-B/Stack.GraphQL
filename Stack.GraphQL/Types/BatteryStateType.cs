@@ -7,7 +7,7 @@ namespace com.b_velop.stack.GraphQl.Types
     public class BatteryStateType : ObjectGraphType<BatteryState>
     {
         public BatteryStateType(
-            IDataStore<MeasurePoint> measurePointRepository)
+            IRepositoryWrapper rep)
         {
             Name = "BatteryState";
             Description = "State of Battery value.";
@@ -22,7 +22,7 @@ namespace com.b_velop.stack.GraphQl.Types
 
             FieldAsync<MeasurePointType, MeasurePoint>(
                 nameof(BatteryState.Point),
-                resolve: async context => await measurePointRepository.GetAsync(context.Source.Point));
+                resolve: async context => await rep.MeasurePoint.SelectByIdAsync(context.Source.Point));
 
             Interface<TimeTypeInterface>();
         }

@@ -41,7 +41,9 @@ namespace com.b_velop.stack.GraphQl.Middlewares
             this.listener = listener;
         }
 
-        public async Task Invoke(HttpContext context, ISchema schema)
+        public async Task Invoke(
+            HttpContext context,
+            Schema schema)
         {
             if (!IsGraphQLRequest(context))
             {

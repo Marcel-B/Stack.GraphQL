@@ -14,7 +14,7 @@ namespace com.b_velop.stack.GraphQl.Types
                 .Description("The unique identifier of the Link.");
 
             Field(x => x.Created).Description("The time of creation.");
-            Field(x => x.LastEdit).Description("Last edit of the value.");
+            Field(x => x.Updated, nullable: true).Description("Last edit of the value.");
             Field(x => x.Name).Description("A readable name.");
             Field(x => x.LinkValue).Description("The link.");
         }
