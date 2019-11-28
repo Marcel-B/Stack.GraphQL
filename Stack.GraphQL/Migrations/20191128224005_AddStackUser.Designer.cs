@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using com.b_velop.stack.DataContext.Abstract;
 
 namespace com.b_velop.stack.GraphQl.Migrations
 {
     [DbContext(typeof(MeasureContext))]
-    partial class MeasureContextModelSnapshot : ModelSnapshot
+    [Migration("20191128224005_AddStackUser")]
+    partial class AddStackUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

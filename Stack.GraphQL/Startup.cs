@@ -78,7 +78,7 @@ namespace com.b_velop.stack.GraphQl
                 options.AllowSynchronousIO = true;
             });
 
-            services.UseStackDataContext();
+            services.AddStackRepositories();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddScoped<IUrlHelper, UrlHelper>(f =>

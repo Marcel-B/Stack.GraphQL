@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using com.b_velop.stack.DataContext.Abstract;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
+using Prometheus;
 
 namespace com.b_velop.stack.GraphQl
 {
@@ -25,10 +27,10 @@ namespace com.b_velop.stack.GraphQl
             {
                 if (stage != "Development")
                 {
-                    //var metricServer = new MetricPusher(
-                    //    endpoint: "https://push.qaybe.de/metrics",
-                    //    job: "stack_graphql");
-                    //metricServer.Start();
+                    var metricServer = new MetricPusher(
+                        endpoint: "https://push.qaybe.de/metrics",
+                        job: "stack_graphql");
+                    metricServer.Start();
                 }
 
                 logger.Debug("init main");
@@ -46,7 +48,7 @@ namespace com.b_velop.stack.GraphQl
                 NLog.LogManager.Shutdown();
             }
         }
-
+        
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                   .ConfigureWebHostDefaults(webBuilder =>
